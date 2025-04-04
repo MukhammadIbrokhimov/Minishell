@@ -61,14 +61,14 @@ struct cmd *parsecmd(char*);
 
 // Execute cmd.  Never returns.
 void
-runcmd(struct cmd *cmd)
+runcmd(struct cmd *cmd) // struct cmd is int type
 {
   int p[2];
-  struct backcmd *bcmd;
-  struct execcmd *ecmd;
-  struct listcmd *lcmd;
-  struct pipecmd *pcmd;
-  struct redircmd *rcmd;
+  struct backcmd *bcmd; // backcmd == int type && struct cmd
+  struct execcmd *ecmd; // == int type && char *argv[maxargc] && char *eargv[mmaxargc]
+  struct listcmd *lcmd; // int type && cmd *right && cmd *left
+  struct pipecmd *pcmd; // int type && cmd *right && cmd *left
+  struct redircmd *rcmd; // int type && cmd && char *file && char *efile && int mode && int fd
 
   if(cmd == 0)
     exit(1);
@@ -139,10 +139,10 @@ runcmd(struct cmd *cmd)
 int
 getcmd(char *buf, int nbuf)
 {
-  fprintf(stderr, "$ ");
-  memset(buf, 0, nbuf);
-  fgets(buf, nbuf, stdin);
-  if(buf[0] == 0) // EOF
+  fprintf(stderr, "$ "); // stdout can keep the buffer, it makes a bit late printing process, in order to have always $ in our terminal we use stderr
+  memset(buf, 0, nbuf); // assignig 0 to whole buf
+  fgets(buf, nbuf, stdin); // read from stdin
+  if(buf[0] == 0) // EOF and it  makes our programm stop when user pres CTRL + D
     return -1;
   return 0;
 }
@@ -155,7 +155,7 @@ main(void)
 
   // Ensure that three file descriptors are open.
   while((fd = open("console", O_RDWR)) >= 0){
-    if(fd >= 3){
+    if(fd >= 3){ // if we have more than stdin stdout and stderr close file descriptor
       close(fd);
       break;
     }
@@ -180,12 +180,12 @@ main(void)
 void
 panic(char *s)
 {
-  fprintf(stderr, "%s\n", s);
+  fprintf(stderr, "%s\n", s); // makes easier to print out error messages
   exit(1);
 }
 
 int
-fork1(void)
+fork1(void) // updated fork() function with error handling
 {
   int pid;
 
