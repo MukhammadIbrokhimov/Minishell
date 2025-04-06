@@ -78,29 +78,29 @@ runcmd(struct cmd *cmd) // struct cmd is int type
     panic("runcmd");
 
   case EXEC:
-    ecmd = (struct execcmd*)cmd;
+    ecmd = (struct execcmd*)cmd; // casting cmd to execcmd to access argv
     if(ecmd->argv[0] == 0)
       exit(1);
     execvp(ecmd->argv[0], ecmd->argv);
-    fprintf(stderr, "exec %s failed\n", ecmd->argv[0]);
+    fprintf(stderr, "exec %s failed\n", ecmd->argv[0]); // this command is going to work only in case execvp is fail
     break;
 
   case REDIR:
-    rcmd = (struct redircmd*)cmd;
-    close(rcmd->fd);
+    rcmd = (struct redircmd*)cmd; // casting cmd to redir
+    close(rcmd->fd); // file descriptor
     if(open(rcmd->file, rcmd->mode) < 0){
       fprintf(stderr, "open %s failed\n", rcmd->file);
       exit(1);
     }
     runcmd(rcmd->cmd);
-    break;
+    break; // calling itself recursively
 
   case LIST:
     lcmd = (struct listcmd*)cmd;
     if(fork1() == 0)
-      runcmd(lcmd->left);
-    wait(NULL);
-    runcmd(lcmd->right);
+      runcmd(lcmd->left); // will run command in child processor
+    wait(NULL); // will wait for child processor until it finishs its operation
+    runcmd(lcmd->right); // and will start to run right command
     break;
 
   case PIPE:
@@ -129,9 +129,9 @@ runcmd(struct cmd *cmd) // struct cmd is int type
 
   case BACK:
     bcmd = (struct backcmd*)cmd;
-    if(fork1() == 0)
-      runcmd(bcmd->cmd);
-    break;
+    if(fork1() == 0) // main thing is to create a child processor here in order to let it work background
+      runcmd(bcmd->cmd); // calling itself in child processor
+    break; // parent processor will brak here
   }
   exit(0);
 }
