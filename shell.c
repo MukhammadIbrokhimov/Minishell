@@ -20,13 +20,13 @@ typedef uint pde_t;
 #define MAXARGS 10
 
 struct cmd {
-  int type;
+  int type; // Type of command (e.g., EXEC, REDIR, PIPE, LIST, BACK)
 };
 
 struct execcmd {
-  int type;
-  char *argv[MAXARGS];
-  char *eargv[MAXARGS];
+  int type;   // Type = EXEC
+  char *argv[MAXARGS]; // Arguments
+  char *eargv[MAXARGS];  // Ends of arguments
 };
 
 struct redircmd {
@@ -39,9 +39,9 @@ struct redircmd {
 };
 
 struct pipecmd {
-  int type;
-  struct cmd *left;
-  struct cmd *right;
+  int type; // Type = PIPE
+  struct cmd *left; // left side of the pipe
+  struct cmd *right; // right side of the pipe
 };
 
 struct listcmd {
@@ -107,14 +107,14 @@ runcmd(struct cmd *cmd) // struct cmd is int type
     pcmd = (struct pipecmd*)cmd;
     if(pipe(p) < 0)
       panic("pipe");
-    if(fork1() == 0){
-      close(1);
-      dup(p[1]);
+    if(fork1() == 0){ // will go to child processor
+      close(1); // close stdin in order to make it available
+      dup(p[1]);  // will find available file descriptor and copy there (p[1]) - > stdout
       close(p[0]);
       close(p[1]);
-      runcmd(pcmd->left);
+      runcmd(pcmd->left); // will run command for left tree
     }
-    if(fork1() == 0){
+    if(fork1() == 0){ // will create another child processor
       close(0);
       dup(p[0]);
       close(p[0]);
@@ -123,8 +123,8 @@ runcmd(struct cmd *cmd) // struct cmd is int type
     }
     close(p[0]);
     close(p[1]);
-    wait(NULL);
-    wait(NULL);
+    wait(NULL); // will wait for first child processor
+    wait(NULL); // will wait for second processor
     break;
 
   case BACK:
@@ -334,16 +334,16 @@ struct cmd*
 parsecmd(char *s)
 {
   char *es;
-  struct cmd *cmd;
+  struct cmd *cmd; // int type
 
-  es = s + strlen(s);
-  cmd = parseline(&s, es);
+  es = s + strlen(s); // set es to end of string
+  cmd = parseline(&s, es); // parsing the command line
   peek(&s, es, "");
-  if(s != es){
+  if(s != es){ // checking for remained characters, if anything left over prints an error
     fprintf(stderr, "leftovers: %s\n", s);
     panic("syntax");
   }
-  nulterminate(cmd);
+  nulterminate(cmd); // ensure proper null termination
   return cmd;
 }
 
