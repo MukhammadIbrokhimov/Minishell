@@ -268,7 +268,7 @@ backcmd(struct cmd *subcmd)
 char whitespace[] = " \t\r\n\v";
 char symbols[] = "<|>&;()";
 
-int
+int	// start of the str // EOS  // token	//EOT
 gettoken(char **ps, char *es, char **q, char **eq)
 {
   char *s;
