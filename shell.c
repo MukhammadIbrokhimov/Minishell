@@ -274,11 +274,11 @@ gettoken(char **ps, char *es, char **q, char **eq)
   char *s;
   int ret;
 
-  s = *ps;
-  while(s < es && strchr(whitespace, *s))
+  s = *ps; // start from current position
+  while(s < es && strchr(whitespace, *s)) // skipping whitespaces
     s++;
   if(q)
-    *q = s;
+    *q = s; // setting q to beginning of the token  
   ret = *s;
   switch(*s){
   case 0:
@@ -293,21 +293,21 @@ gettoken(char **ps, char *es, char **q, char **eq)
     break;
   case '>':
     s++;
-    if(*s == '>'){
+    if(*s == '>'){ // handles if token contains >>
       ret = '+';
       s++;
     }
     break;
   default:
-    ret = 'a';
+    ret = 'a'; // handles if input contains word example "cat"
     while(s < es && !strchr(whitespace, *s) && !strchr(symbols, *s))
       s++;
     break;
   }
-  if(eq)
+  if(eq) //set end of the token
     *eq = s;
 
-  while(s < es && strchr(whitespace, *s))
+  while(s < es && strchr(whitespace, *s)) // skip again whitespace
     s++;
   *ps = s;
   return ret;
