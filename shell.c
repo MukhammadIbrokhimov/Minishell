@@ -338,12 +338,11 @@ parsecmd(char *s)
 
   es = s + strlen(s); // set es to end of string
   cmd = parseline(&s, es); // parsing the command line
-  peek(&s, es, "");
+  peek(&s, es, ""); // checks if there is something left inside s
   if(s != es){ // checking for remained characters, if anything left over prints an error
     fprintf(stderr, "leftovers: %s\n", s);
     panic("syntax");
   }
-  nulterminate(cmd); // ensure proper null termination
   return cmd;
 }
 
@@ -353,13 +352,13 @@ parseline(char **ps, char *es)
   struct cmd *cmd;
 
   cmd = parsepipe(ps, es);
-  while(peek(ps, es, "&")){
-    gettoken(ps, es, 0, 0);
+  while(peek(ps, es, "&")){ // loop works only if peek function returns true (is & exist inside ps)
+    gettoken(ps, es, 0, 0); // we are calling get token in order to advance our pointer ps till next token.
     cmd = backcmd(cmd);
   }
-  if(peek(ps, es, ";")){
+  if(peek(ps, es, ";")){ // again gettoken function will advance our pointer only if we have ; in our string
     gettoken(ps, es, 0, 0);
-    cmd = listcmd(cmd, parseline(ps, es));
+    cmd = listcmd(cmd, parseline(ps, es)); // will call itself recursively in order to tokenize again and again
   }
   return cmd;
 }
