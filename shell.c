@@ -204,7 +204,7 @@ execcmd(void)
   struct execcmd *cmd;
 
   cmd = malloc(sizeof(*cmd));
-  memset(cmd, 0, sizeof(*cmd));
+  memset(cmd, 0, sizeof(*cmd)); // set to 0
   cmd->type = EXEC;
   return (struct cmd*)cmd;
 }
@@ -369,9 +369,9 @@ parsepipe(char **ps, char *es)
 {
   struct cmd *cmd;
 
-  cmd = parseexec(ps, es);
-  if(peek(ps, es, "|")){
-    gettoken(ps, es, 0, 0);
+  cmd = parseexec(ps, es); // 
+  if(peek(ps, es, "|")){ // returns boolean if pipe exist
+    gettoken(ps, es, 0, 0); // will move pointer to token
     cmd = pipecmd(cmd, parsepipe(ps, es));
   }
   return cmd;
@@ -423,21 +423,21 @@ parseexec(char **ps, char *es)
 {
   char *q, *eq;
   int tok, argc;
-  struct execcmd *cmd;
+  struct execcmd *cmd; // int type | char *argv [MAXARGS] | char *eargv[MAXARGS]
   struct cmd *ret;
 
   if(peek(ps, es, "("))
     return parseblock(ps, es);
 
-  ret = execcmd();
-  cmd = (struct execcmd*)ret;
+  ret = execcmd(); // initialie cmd to exec
+  cmd = (struct execcmd*)ret; // casting cmd
 
-  argc = 0;
+  argc = 0; 
   ret = parseredirs(ret, ps, es);
-  while(!peek(ps, es, "|)&;")){
-    if((tok=gettoken(ps, es, &q, &eq)) == 0)
+  while(!peek(ps, es, "|)&;")){ // if string will not contain these symbols
+    if((tok=gettoken(ps, es, &q, &eq)) == 0) // assigning the pointer os the token to tok variable
       break;
-    if(tok != 'a')
+    if(tok != 'a') 
       panic("syntax");
     cmd->argv[argc] = q;
     cmd->eargv[argc] = eq;
