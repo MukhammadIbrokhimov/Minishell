@@ -425,7 +425,7 @@ parseexec(char **ps, char *es)
   int tok, argc;
   struct execcmd *cmd; // int type | char *argv [MAXARGS] | char *eargv[MAXARGS]
   struct cmd *ret;
-
+ 
   if(peek(ps, es, "("))
     return parseblock(ps, es);
 
