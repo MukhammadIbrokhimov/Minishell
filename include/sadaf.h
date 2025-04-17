@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   sadaf.h                                            :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: mukibrok <mukibrok@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/04/15 19:48:31 by muxammad          #+#    #+#             */
+/*   Updated: 2025/04/17 16:50:29 by mukibrok         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #ifndef SADAF_H
 # define SADAF_H
 
@@ -27,58 +39,59 @@
 extern int g_signal_received;
 
 typedef struct s_cmd {
-    int type;
+	int type;
 } t_cmd;
 
 typedef struct s_execcmd {
-    int type;
-    char *argv[MAXARGS];
-    char *eargv[MAXARGS];
+	int type;
+	char *argv[MAXARGS];
+	char *eargv[MAXARGS];
 } t_execcmd;
 
 typedef struct s_redircmd {
-    int type;
-    struct s_cmd *cmd;
-    char *file;
-    char *efile;
-    int mode;
-    int fd;
+	int type;
+	struct s_cmd *cmd;
+	char *file;
+	char *efile;
+	int mode;
+	int fd;
 } t_redircmd;
 
 typedef struct s_pipecmd {
-    int type;
-    struct s_cmd *left;
-    struct s_cmd *right;
+	int type;
+	struct s_cmd *left;
+	struct s_cmd *right;
 } t_pipecmd;
 
 typedef struct s_listcmd {
-    int type;
-    struct s_cmd *left;
-    struct s_cmd *right;
+	int type;
+	struct s_cmd *left;
+	struct s_cmd *right;
 } t_listcmd;
 
 typedef struct s_backcmd {
-    int type;
-    struct s_cmd *cmd;
+	int type;
+	struct s_cmd *cmd;
 } t_backcmd;
 
 typedef struct s_env {
-    char *name;
-    char *value;
-    struct s_env *next;
+	char *name;
+	char *value;
+	struct s_env *next;
 } t_env;
 
 typedef struct s_shell {
-    t_env *env_list;
-    int exit_status;
-    int in_heredoc;
+	t_env *env_list;
+	int exit_status;
+	int in_heredoc;
 } t_shell;
 
 /* Main functions */
-t_shell *init_shell(char **envp);
-void    free_shell(t_shell *shell);
-int     sadaf_prompt(t_shell *shell);
-int     process_command(char *buf, t_shell *shell);
+t_shell	*init_shell(char **envp);
+void	free_shell(t_shell *shell);
+void	free_env_list(t_env *env_list);
+int		sadaf_prompt(t_shell *shell);
+int		process_command(char *buf, t_shell *shell);
 
 /* Command execution */
 void    runcmd(t_cmd *cmd, t_shell *shell);
@@ -89,12 +102,12 @@ void    handle_list(t_listcmd *lcmd, t_shell *shell);
 void    handle_background(t_backcmd *bcmd, t_shell *shell);
 
 /* Parsing */
-t_cmd   *parsecmd(char *buf);
-t_cmd   *parseline(char **ps, char *es);
-t_cmd   *parsepipe(char **ps, char *es);
-t_cmd   *parseexec(char **ps, char *es);
-t_cmd   *parseredirs(t_cmd *cmd, char **ps, char *es);
-t_cmd   *parseblock(char **ps, char *es);
+t_cmd   *parsecmd(char *buf, t_shell *shell);
+t_cmd   *parseline(char **ps, char *es, t_shell *shell);
+t_cmd   *parsepipe(char **ps, char *es, t_shell *shell);
+t_cmd   *parseexec(char **ps, char *es, t_shell *shell);
+t_cmd   *parseredirs(t_cmd *cmd, char **ps, char *es, t_shell *shell);
+t_cmd   *parseblock(char **ps, char *es, t_shell *shell);
 int     peek(char **ps, char *es, char *toks);
 int     gettoken(char **ps, char *es, char **q, char **eq);
 t_cmd   *nulterminate(t_cmd *cmd);
@@ -139,25 +152,24 @@ void    handle_sigint(int sig);
 void    handle_sigquit(int sig);
 
 /* Utils */
-char    *ft_strndup(const char *s, size_t n);
 void    ft_error(char *msg);
 void    ft_perror(char *msg);
 int     fork_safely(void);
 void    free_cmd(t_cmd *cmd);
-char    *ft_strdup(const char *s);
-char    **ft_split(char const *s, char c);
-int     ft_strncmp(const char *s1, const char *s2, size_t n);
-int     ft_strcmp(const char *s1, const char *s2);
-char    *ft_strjoin(char const *s1, char const *s2);
-size_t  ft_strlen(const char *s);
-void    ft_putstr_fd(char *s, int fd);
+//char    *ft_strdup(const char *s);
+//char    **ft_split(char const *s, char c);
+//int     ft_strncmp(const char *s1, const char *s2, size_t n);
+//int     ft_strcmp(const char *s1, const char *s2);
+//char    *ft_strjoin(char const *s1, char const *s2);
+//size_t  ft_strlen(const char *s);
+//void    ft_putstr_fd(char *s, int fd);
 char    *ft_getenv(char *name, t_shell *shell);
-char    *ft_substr(char const *s, unsigned int start, size_t len);
-void    *ft_calloc(size_t nmemb, size_t size);
-void    ft_bzero(void *s, size_t n);
-int     ft_isalpha(int c);
-int     ft_isalnum(int c);
-int     ft_isdigit(int c);
+//char    *ft_substr(char const *s, unsigned int start, size_t len);
+//void    *ft_calloc(size_t nmemb, size_t size);
+//void    ft_bzero(void *s, size_t n);
+//int     ft_isalpha(int c);
+//int     ft_isalnum(int c);
+//int     ft_isdigit(int c);
 void    expand_variables(t_execcmd *ecmd, t_shell *shell);
 void    cleanup_tokens(char **tokens);
 

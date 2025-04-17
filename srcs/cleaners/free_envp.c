@@ -6,11 +6,11 @@
 /*   By: mukibrok <mukibrok@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/17 16:21:11 by mukibrok          #+#    #+#             */
-/*   Updated: 2025/04/17 16:22:41 by mukibrok         ###   ########.fr       */
+/*   Updated: 2025/04/17 17:04:16 by mukibrok         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../../include/minishell.h"
+#include "../../includes/sadaf.h"
 
 void	free_env_list(t_env *env_list)
 {

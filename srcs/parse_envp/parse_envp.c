@@ -10,8 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../../include/minishell.h"
-#include "libft/libft.h"
+#include "../../includes/sadaf.h"
 
 void append_env_node(t_env **head, t_env **tail, t_env *new_node)
 {
@@ -100,20 +99,4 @@ t_shell	*init_shell(char **envp)
 	shell->exit_status = 0;
 	shell->in_heredoc = 0;
 	return (shell);
-}
-
-
-
-int main(int argc, char **argv, char **envp)
-{
-	t_shell *shell;
-
-	shell = init_shell(envp);
-
-	//while (shell->env_list->next){
-	//	printf("key: %s ", shell->env_list->name);
-	//	printf("value: %s\n", shell->env_list->value);
-	//	shell->env_list = shell->env_list->next;
-	//}
-	free_shell(shell);
 }
