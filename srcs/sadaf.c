@@ -3,14 +3,14 @@
 /*                                                        :::      ::::::::   */
 /*   sadaf.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mukibrok <mukibrok@student.42.fr>          +#+  +:+       +#+        */
+/*   By: muxammad <muxammad@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/17 16:38:55 by mukibrok          #+#    #+#             */
-/*   Updated: 2025/04/17 17:17:08 by mukibrok         ###   ########.fr       */
+/*   Updated: 2025/04/19 18:22:48 by muxammad         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../../includes/sadaf.h"
+#include "../includes/sadaf.h"
 
 int	main(int argc, char **argv, char **envp)
 {
@@ -24,14 +24,11 @@ int	main(int argc, char **argv, char **envp)
 		break;
 		}
 	}
-	shell = init_shell(NULL);
+	shell = init_shell(envp);
 	if (!shell)
-	{
-		perror("Failed to initialize shell");
-		return (EXIT_FAILURE);
-	}
+		return (perror("Failed to initialize shell"), EXIT_FAILURE);
 	// Read and run input commands.
-	while(getcmd(buf, sizeof(buf)) >= 0)
+	while(getline(buf, sizeof(buf)) >= 0)
 	{
 		if(buf[0] == 'c' && buf[1] == 'd' && buf[2] == ' ')
 		{
