@@ -6,7 +6,7 @@
 /*   By: muxammad <muxammad@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/15 19:48:31 by muxammad          #+#    #+#             */
-/*   Updated: 2025/04/21 15:30:27 by muxammad         ###   ########.fr       */
+/*   Updated: 2025/04/21 16:07:16 by muxammad         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -125,7 +125,7 @@ t_cmd	*parsepipe(ParserState *ps);
 t_cmd	*parseexec(ParserState *ps);
 t_cmd   *parseredirs(t_cmd *cmd, ParserState **ps);
 t_cmd	*parseblock(ParserState *ps);
-t_token get_token(ParserState *ps);
+t_token gettoken(ParserState *ps);
 t_cmd	*nulterminate(t_cmd *cmd);
 
 /* Command constructors */
