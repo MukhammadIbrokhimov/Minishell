@@ -6,13 +6,6 @@
 /*   By: muxammad <muxammad@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/18 19:52:10 by muxammad          #+#    #+#             */
-<<<<<<< HEAD
-/*   Updated: 2025/04/19 18:23:06 by muxammad         ###   ########.fr       */
-=======
-/*   Updated: 2025/04/21 13:00:40 by muxammad         ###   ########.fr       */
->>>>>>> feat/prompt
-/*                                                                            */
-/* ************************************************************************** */
 
 #include "../../includes/sadaf.h"
 
@@ -31,16 +24,6 @@ void	print_prompt()
 	}
 }
 
-<<<<<<< HEAD
-
-int getcmd(char *buf, int nbuf)
-{
-	print_prompt();
-	memset(buf, 0, nbuf);
-	if (fgets(buf, nbuf, stdin) == NULL)
-		return (EXIT_FAILURE);
-	return (EXIT_SUCCESS);
-=======
 char *getcmd(void)
 {
 	char cwd[PATH_MAX];
@@ -64,25 +47,4 @@ char *getcmd(void)
 		add_history(cmd);
 
 	return (cmd);  // caller must free(cmd)
->>>>>>> feat/prompt
 }
-
-//int
-//main(void)
-//{
-<<<<<<< HEAD
-//  static char buf[100];
-
-//  while (getcmd(buf, sizeof(buf)) >= 0) {
-//    printf("You entered: %s", buf);
-=======
-	
-//  while (1) {
-//	char *cmd = getcmd();
-//    printf("You entered: %s", cmd);
->>>>>>> feat/prompt
-//  }
-
-//  printf("\nExiting shell.\n");
-//  return 0;
-//}
