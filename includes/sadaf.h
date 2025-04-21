@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   sadaf.h                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mukibrok <mukibrok@student.42.fr>          +#+  +:+       +#+        */
+/*   By: muxammad <muxammad@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/15 19:48:31 by muxammad          #+#    #+#             */
-/*   Updated: 2025/04/17 16:50:29 by mukibrok         ###   ########.fr       */
+/*   Updated: 2025/04/21 12:57:27 by muxammad         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -102,7 +102,7 @@ void    handle_list(t_listcmd *lcmd, t_shell *shell);
 void    handle_background(t_backcmd *bcmd, t_shell *shell);
 
 /* Parsing */
-t_cmd   *parsecmd(char *buf, t_shell *shell);
+t_cmd   *parsecmd(char *buf);
 t_cmd   *parseline(char **ps, char *es, t_shell *shell);
 t_cmd   *parsepipe(char **ps, char *es, t_shell *shell);
 t_cmd   *parseexec(char **ps, char *es, t_shell *shell);

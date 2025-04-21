@@ -6,7 +6,7 @@
 /*   By: muxammad <muxammad@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/17 16:38:55 by mukibrok          #+#    #+#             */
-/*   Updated: 2025/04/19 18:22:48 by muxammad         ###   ########.fr       */
+/*   Updated: 2025/04/21 13:00:06 by muxammad         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,7 @@
 int	main(int argc, char **argv, char **envp)
 {
 	t_shell	*shell;
-	static char buf[100];
+	char	*buf;
 	int fd;
 
 	while((fd = open("console", O_RDWR)) >= 0){
@@ -28,8 +28,9 @@ int	main(int argc, char **argv, char **envp)
 	if (!shell)
 		return (perror("Failed to initialize shell"), EXIT_FAILURE);
 	// Read and run input commands.
-	while(getline(buf, sizeof(buf)) >= 0)
+	while(1)
 	{
+		buf = getcmd();
 		if(buf[0] == 'c' && buf[1] == 'd' && buf[2] == ' ')
 		{
 			// Chdir must be called by the parent, not the child.
@@ -42,6 +43,7 @@ int	main(int argc, char **argv, char **envp)
 			runcmd(parsecmd(buf), shell);
 		wait(NULL);
 	}
+	free(buf);
 	free_shell(shell);
 	return (EXIT_SUCCESS);
 }
