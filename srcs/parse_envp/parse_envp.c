@@ -99,3 +99,4 @@ t_shell	*init_shell(char **envp)
 	shell->exit_status = 0;
 	shell->in_heredoc = 0;
 	return (shell);
+}

@@ -6,11 +6,7 @@
 /*   By: muxammad <muxammad@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/17 16:38:55 by mukibrok          #+#    #+#             */
-<<<<<<< HEAD
-/*   Updated: 2025/04/19 18:22:48 by muxammad         ###   ########.fr       */
-=======
-/*   Updated: 2025/04/21 13:00:06 by muxammad         ###   ########.fr       */
->>>>>>> feat/prompt
+/*   Updated: 2025/04/21 13:53:32 by muxammad         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,11 +28,7 @@ int	main(int argc, char **argv, char **envp)
 	if (!shell)
 		return (perror("Failed to initialize shell"), EXIT_FAILURE);
 	// Read and run input commands.
-<<<<<<< HEAD
-	while(getline(buf, sizeof(buf)) >= 0)
-=======
 	while(1)
->>>>>>> feat/prompt
 	{
 		buf = getcmd();
 		if(buf[0] == 'c' && buf[1] == 'd' && buf[2] == ' ')
