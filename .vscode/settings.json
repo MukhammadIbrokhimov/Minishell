@@ -1,8 +1,5 @@
 {
 	"files.associations": {
-		"minishell.h": "c",
-		"libft.h": "c",
-		"sadaf.h": "c",
-		"history.h": "c"
+		"sadaf.h": "c"
 	}
 }

@@ -81,8 +81,9 @@ t_env	*init_envp(char **envp)
 	while (envp[i])
 	{
 		new_node = parse_and_create_env_node(envp[i]);
-		if (new_node)
-			append_env_node(&head, &tail, new_node);
+		if (!new_node)
+			return (free_env_list(head), NULL);
+		append_env_node(&head, &tail, new_node);
 		i++;
 	}
 	return (head);

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   constructor.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: muxammad <muxammad@student.42.fr>          +#+  +:+       +#+        */
+/*   By: mukibrok <mukibrok@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/21 16:31:17 by muxammad          #+#    #+#             */
-/*   Updated: 2025/04/22 10:37:27 by muxammad         ###   ########.fr       */
+/*   Updated: 2025/04/22 14:57:21 by mukibrok         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,7 @@ t_cmd	*execcmd(void)
 
 	cmd = ft_calloc(sizeof(*cmd), sizeof(*cmd));
 	if (!cmd)
-		fprintf(stderr,"execcmd: ft_calloc failed");
+		return (fprintf(stderr,"execcmd: ft_calloc failed"), NULL);
 	cmd->type = EXEC;
 	return ((t_cmd *)cmd);
 }
@@ -29,7 +29,10 @@ t_cmd	*redircmd(t_cmd *subcmd, char *file, char *efile, int mode, int fd)
 
 	cmd = ft_calloc(sizeof(*cmd), sizeof(*cmd));
 	if (!cmd)
+	{
 		fprintf(stderr,"redircmd: ft_calloc failed");
+		return (free_cmd(cmd), NULL);
+	}
 	cmd->type = REDIR;
 	cmd->cmd = subcmd;
 	cmd->file = file;
@@ -45,7 +48,11 @@ t_cmd	*pipecmd(t_cmd *left, t_cmd *right)
 
 	cmd = ft_calloc(sizeof(*cmd), sizeof(*cmd));
 	if (!cmd)
-		fprintf(stderr, "pipecmd: ft_calloc failed");
+	{
+		free_cmd(left);
+		free_cmd(right);
+		return (fprintf(stderr, "pipecmd: ft_calloc failed"), NULL);
+	}
 	cmd->type = PIPE;
 	cmd->left = left;
 	cmd->right = right;
@@ -58,7 +65,11 @@ t_cmd	*listcmd(t_cmd *left, t_cmd *right)
 
 	cmd = ft_calloc(sizeof(*cmd), sizeof(*cmd));
 	if (!cmd)
-		fprintf(stderr, "listcmd: ft_calloc failed");
+	{
+		free_cmd(left);
+		free_cmd(right);
+		return (fprintf(stderr, "listcmd: ft_calloc failed"), NULL);
+	}
 	cmd->type = LIST;
 	cmd->left = left;
 	cmd->right = right;
@@ -71,7 +82,10 @@ t_cmd	*backcmd(t_cmd *subcmd)
 
 	cmd = ft_calloc(sizeof(*cmd), sizeof(*cmd));
 	if (!cmd)
-		fprintf(stderr, "backcmd: ft_calloc failed");
+	{
+		free_cmd(subcmd);
+		return (fprintf(stderr, "backcmd: ft_calloc failed"), NULL);
+	}
 	cmd->type = BACK;
 	cmd->cmd = subcmd;
 	return ((t_cmd *)cmd);

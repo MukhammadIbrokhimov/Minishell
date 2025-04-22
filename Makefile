@@ -11,7 +11,7 @@ CFLAGS  = -Wall -Wextra -Werror
 LIBFT_DIR = ./includes/libft
 LIBFT    = $(LIBFT_DIR)/libft.a
 INCLUDES = -I./includes -I$(LIBFT_DIR)
-SRC_DIR  = ./srcs/parse_cmd
+SRC_DIR  = ./srcs/*
 SRC      = $(wildcard $(SRC_DIR)/*.c)
 OBJ_DIR  = ./obj
 OBJ      = $(patsubst $(SRC_DIR)/%.c,$(OBJ_DIR)/%.o,$(SRC))
@@ -23,7 +23,7 @@ all: $(LIBFT) $(EXEC)
 # Compile the program
 $(EXEC): $(OBJ)
 	@echo "$(CYAN)🔨  Compiling $(EXEC)...$(RESET)"
-	@$(CC) $(CFLAGS) $(OBJ) $(LIBFT) -o $(EXEC)
+	@$(CC) $(CFLAGS) $(OBJ) $(LIBFT) -o $(EXEC) -lreadline
 	@echo "$(GREEN)✅  Compilation successful!$(RESET)"
 
 # Compile object files
