@@ -6,16 +6,23 @@
 /*   By: mukibrok <mukibrok@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/22 12:53:29 by mukibrok          #+#    #+#             */
-/*   Updated: 2025/04/22 12:54:51 by mukibrok         ###   ########.fr       */
-/*                                                                            */
+/*   Updated: 2025/04/22 17:30:23 by mukibrok         ###   ########.fr       */                                                              */
 /* ************************************************************************** */
 
 #include "../../includes/sadaf.h"
 
+/**
+ * free_cmd - Frees a command structure and its components
+ * @cmd: Pointer to the command structure to be freed
+ *
+ * Frees the command structure and its components recursively.
+ * Handles different command types (EXEC, REDIR, PIPE, LIST, BACK).
+ **/
+
 void free_cmd(t_cmd *cmd)
 {
 	if (!cmd)
-		return;
+		return ;
 	if (cmd->type == EXEC)
 	{
 		t_execcmd *ecmd = (t_execcmd *)cmd;

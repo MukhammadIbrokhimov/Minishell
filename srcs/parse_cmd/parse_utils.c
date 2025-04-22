@@ -6,12 +6,27 @@
 /*   By: mukibrok <mukibrok@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/21 13:48:08 by muxammad          #+#    #+#             */
-/*   Updated: 2025/04/22 15:08:57 by mukibrok         ###   ########.fr       */
+/*   Updated: 2025/04/22 17:36:40 by mukibrok         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../includes/sadaf.h"
 #define SYMBOLS "|&;()<>"
+
+ /**
+ * gettoken - Breaks down shell commands into meaningful parts
+ * @ps: Tracks current position in the command string
+ * 
+ * What it does:
+ * - Finds special characters like pipes (|), arrows (< >), semicolons (;)
+ * - Spots command pieces (like program names and arguments)
+ * - Notices when we reach the end of the command
+ * - Handles parentheses for command grouping
+ * 
+ * Returns a package containing:
+ *   - Type: What kind of part it found (pipe, word, etc.)
+ *   - Location: Where this part starts and ends in the command
+ */
 
 t_token gettoken(ParserState *ps)
 {

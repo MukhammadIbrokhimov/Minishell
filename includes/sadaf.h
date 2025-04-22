@@ -6,7 +6,7 @@
 /*   By: mukibrok <mukibrok@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/15 19:48:31 by muxammad          #+#    #+#             */
-/*   Updated: 2025/04/22 13:49:20 by mukibrok         ###   ########.fr       */
+/*   Updated: 2025/04/22 17:59:28 by mukibrok         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -125,7 +125,7 @@ int		process_command(char *buf, t_shell *shell);
 void	free_cmd(t_cmd *cmd);
 void	free_env_list(t_env *env_list);
 void	free_shell(t_shell *shell);
-
+void	ft_exit(char *msg);
 /* Parsing */
 t_cmd   *parsecmd(char *buf);
 t_cmd	*parseline(ParserState *ps);
@@ -186,5 +186,6 @@ int     fork_safely(void);
 char    *ft_getenv(char *name, t_shell *shell);
 void    expand_variables(t_execcmd *ecmd, t_shell *shell);
 void    cleanup_tokens(char **tokens);
+int		fork1(void);
 
 #endif
