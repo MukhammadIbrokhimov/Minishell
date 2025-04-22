@@ -3,67 +3,14 @@
 /*                                                        :::      ::::::::   */
 /*   parse_cmd.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: muxammad <muxammad@student.42.fr>          +#+  +:+       +#+        */
+/*   By: mukibrok <mukibrok@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/17 17:17:52 by mukibrok          #+#    #+#             */
-/*   Updated: 2025/04/22 11:22:36 by muxammad         ###   ########.fr       */
+/*   Updated: 2025/04/22 15:09:10 by mukibrok         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../includes/sadaf.h"
-
-/**
- * parseblock - Parses a command block enclosed in parentheses
- * @ps: Parser state containing input string and position
- * 
- * Returns: t_cmd* representing the parsed block command
- *          NULL on syntax error (caller should handle)
- *
- * Handles: ( command-list ) [redirections]
- * Performs full syntax validation and maintains parser state
- */
-
-t_cmd *parseblock(ParserState *ps)
-{
-	t_cmd *cmd;
-	t_token tok;
-	
-	/* --- Phase 1: Validate block opening --- */
-	tok = gettoken(ps); // completed
-	if (tok.type != TOK_LPAREN)
-	{
-		fprintf(stderr, "Syntax error: Expected '(' to start block at %.*s\n", 
-				(int)(tok.end - tok.start), tok.start);
-		return NULL;
-	}
-
-	/* --- Phase 2: Parse block contents --- */
-	if (!(cmd = parseline(ps))) // completed
-	{
-		fprintf(stderr, "Error: Failed to parse block contents\n");
-		return NULL;
-	}
-
-	/* --- Phase 3: Validate block closing --- */
-	tok = gettoken(ps);
-	if (tok.type != TOK_RPAREN)
-	{
-		fprintf(stderr, "Syntax error: Unclosed block, expected ')' at %.*s\n",
-				(int)(ps->end - tok.start), tok.start);
-		//freecmd(cmd);  // Avoid memory leak
-		return (NULL);
-	}
-
-	/* --- Phase 4: Handle trailing redirections --- */
-	if (!(cmd = parseredirs(cmd, ps)))
-	{
-		fprintf(stderr, "Error: Failed to parse redirections for block\n");
-		//freecmd(cmd);
-		return (NULL);
-	}
-
-	return (cmd);
-}
 
 t_cmd	*parseexec(ParserState *ps)
 {
@@ -112,7 +59,11 @@ t_cmd	*parsepipe(ParserState *ps)
 	cmd = parseexec(ps); // developing
 	tok = gettoken(ps); // completed
 	if (tok.type == TOK_PIPE) // if |
+	{
 		cmd = pipecmd(cmd, parsepipe(ps)); // completed
+		if (!cmd)
+			fprintf(stderr, "Pipe command failed\n");
+	}
 	else
 		ps->s = tok.start;
 	return (cmd);
@@ -128,7 +79,11 @@ t_cmd	*parseline(ParserState *ps)
 	{
 		tok = gettoken(ps); // tokenize completed
 		if (tok.type == TOK_AND) // if &
+		{
 			cmd = backcmd(cmd); // completed
+			if (!cmd)
+				fprintf(stderr, "Backcmd failed\n");
+		}
 		else if (tok.type == TOK_SEQ) // if ;
 			cmd = listcmd(cmd, parseline(ps)); // completed
 		else
@@ -148,12 +103,13 @@ t_cmd	*parsecmd(char *buf)
 
 	ps.s = buf;
 	ps.end = buf + ft_strlen(buf);
-	cmd = parseline(&ps); // developing
+	cmd = parseline(&ps); // completed
 	tok = gettoken(&ps); // completed
 	if (tok.type != TOK_EOF)
 	{
 		fprintf(stderr, "syntax error: unexpected token at '%.*s'\n",
 			(int)(tok.end - tok.start), tok.start);
+		free_cmd(cmd); // free the command structure
 		exit(EXIT_FAILURE);
 	}
 	return (cmd);
@@ -186,17 +142,41 @@ main(void)
   // Read and run input commands.
   while(1){
 	buf = getcmd();
+	if (!buf)
+		break ;
     if(buf[0] == 'c' && buf[1] == 'd' && buf[2] == ' '){
       // Chdir must be called by the parent, not the child.
       buf[strlen(buf)-1] = 0;  // chop \n
       if(chdir(buf+3) < 0)
         fprintf(stderr, "cannot cd %s\n", buf+3);
+	  free(buf);
       continue;
     }
     if(fork1() == 0){
 		t_cmd *cmd = parsecmd(buf);
-		printf("command: %d\n", cmd->type);
+		if (cmd->type == EXEC) {
+			t_execcmd *ecmd = (t_execcmd *)cmd;
+			printf("EXEC command: argv[0] = %s\n", ecmd->argv[0]);
+		} else if (cmd->type == REDIR) {
+			t_redircmd *rcmd = (t_redircmd *)cmd;
+			printf("REDIR command: file = %s\n", rcmd->file);
+		} else if (cmd->type == PIPE) {
+			t_pipecmd *pcmd = (t_pipecmd *)cmd;
+			printf("PIPE command: left type = %d, right type = %d\n", pcmd->left->type, pcmd->right->type);
+		} else if (cmd->type == LIST) {
+			t_listcmd *lcmd = (t_listcmd *)cmd;
+			printf("LIST command: left type = %d, right type = %d\n", lcmd->left->type, lcmd->right->type);
+		} else if (cmd->type == BACK) {
+			t_backcmd *bcmd = (t_backcmd *)cmd;
+			printf("BACK command: cmd type = %d\n", bcmd->cmd->type);
+		} else {
+			fprintf(stderr, "Unknown command type\n");
+		}
+		free_cmd(cmd);
+		//free(buf);
+		exit(0);
 	}
+	free(buf);
     wait(NULL);
   }
   

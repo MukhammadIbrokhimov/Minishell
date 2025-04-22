@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   sadaf.h                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: muxammad <muxammad@student.42.fr>          +#+  +:+       +#+        */
+/*   By: mukibrok <mukibrok@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/15 19:48:31 by muxammad          #+#    #+#             */
-/*   Updated: 2025/04/22 11:19:01 by muxammad         ###   ########.fr       */
+/*   Updated: 2025/04/22 13:49:20 by mukibrok         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,6 +27,9 @@
 # include <dirent.h>
 # include <termios.h>
 # include "libft/libft.h"
+# ifndef PATH_MAX
+# define PATH_MAX 1024
+# endif
 
 # define EXEC  1
 # define REDIR 2
@@ -114,10 +117,14 @@ typedef struct s_shell {
 
 /* Main functions */
 t_shell	*init_shell(char **envp);
-void	free_shell(t_shell *shell);
 char	*getcmd(void);
 int		sadaf_prompt(t_shell *shell);
 int		process_command(char *buf, t_shell *shell);
+
+// cleaner functions
+void	free_cmd(t_cmd *cmd);
+void	free_env_list(t_env *env_list);
+void	free_shell(t_shell *shell);
 
 /* Parsing */
 t_cmd   *parsecmd(char *buf);
@@ -176,21 +183,7 @@ void    handle_background(t_backcmd *bcmd, t_shell *shell);
 void    ft_error(char *msg);
 void    ft_perror(char *msg);
 int     fork_safely(void);
-void    free_cmd(t_cmd *cmd);
-//char    *ft_strdup(const char *s);
-//char    **ft_split(char const *s, char c);
-//int     ft_strncmp(const char *s1, const char *s2, size_t n);
-//int     ft_strcmp(const char *s1, const char *s2);
-//char    *ft_strjoin(char const *s1, char const *s2);
-//size_t  ft_strlen(const char *s);
-//void    ft_putstr_fd(char *s, int fd);
 char    *ft_getenv(char *name, t_shell *shell);
-//char    *ft_substr(char const *s, unsigned int start, size_t len);
-//void    *ft_calloc(size_t nmemb, size_t size);
-//void    ft_bzero(void *s, size_t n);
-//int     ft_isalpha(int c);
-//int     ft_isalnum(int c);
-//int     ft_isdigit(int c);
 void    expand_variables(t_execcmd *ecmd, t_shell *shell);
 void    cleanup_tokens(char **tokens);
 

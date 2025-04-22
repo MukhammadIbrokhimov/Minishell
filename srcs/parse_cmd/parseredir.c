@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parseredir.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: muxammad <muxammad@student.42.fr>          +#+  +:+       +#+        */
+/*   By: mukibrok <mukibrok@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/22 10:57:14 by muxammad          #+#    #+#             */
-/*   Updated: 2025/04/22 11:12:17 by muxammad         ###   ########.fr       */
+/*   Updated: 2025/04/22 14:59:08 by mukibrok         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,7 +33,6 @@ t_cmd *parseredirs(t_cmd *cmd, ParserState *ps)
 			ps->s = op_tok.start; // Put token back
 			break;
 		}
-
 		// Get the redirection target file
 		file_tok = gettoken(ps);
 		if (file_tok.type != TOK_WORD) {
@@ -41,7 +40,6 @@ t_cmd *parseredirs(t_cmd *cmd, ParserState *ps)
 				(int)(file_tok.end - file_tok.start), file_tok.start);
 			return cmd;
 		}
-
 		// Create redirection command node
 		int mode, fd;
 		switch (op_tok.type) {
@@ -57,18 +55,14 @@ t_cmd *parseredirs(t_cmd *cmd, ParserState *ps)
 				mode = O_WRONLY | O_CREAT | O_APPEND;
 				fd = 1;     // stdout
 				break;
-			default:
-				fprintf(stderr, "Internal error: Unknown redirection operator\n");
-				return cmd;
 		}
-
 		t_cmd *newcmd = redircmd(cmd, file_tok.start, file_tok.end, mode, fd);
-		if (!newcmd) {
+		if (!newcmd)
+		{
 			fprintf(stderr, "Error: Failed to create redirection command\n");
-			return cmd;
+			return (NULL);
 		}
 		cmd = newcmd;
 	}
-
-	return cmd;
+	return (cmd);
 }

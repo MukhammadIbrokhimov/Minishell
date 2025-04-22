@@ -1,19 +1,19 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   parce_utils.c                                      :+:      :+:    :+:   */
+/*   parse_utils.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: muxammad <muxammad@student.42.fr>          +#+  +:+       +#+        */
+/*   By: mukibrok <mukibrok@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/21 13:48:08 by muxammad          #+#    #+#             */
-/*   Updated: 2025/04/21 15:28:29 by muxammad         ###   ########.fr       */
+/*   Updated: 2025/04/22 15:08:57 by mukibrok         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../includes/sadaf.h"
 #define SYMBOLS "|&;()<>"
 
-t_token get_token(ParserState *ps)
+t_token gettoken(ParserState *ps)
 {
 	char *s;
 	t_token tok;
