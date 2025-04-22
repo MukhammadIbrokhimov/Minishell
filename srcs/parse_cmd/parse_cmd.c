@@ -12,8 +12,6 @@
 
 #include "../../includes/sadaf.h"
 
-
-
 /**
  * parseblock - Parses a command block enclosed in parentheses
  * @ps: Parser state containing input string and position
@@ -149,7 +147,7 @@ t_cmd	*parsecmd(char *buf)
 	t_token		tok;
 
 	ps.s = buf;
-	ps.end = buf + strlen(buf);
+	ps.end = buf + ft_strlen(buf);
 	cmd = parseline(&ps); // developing
 	tok = gettoken(&ps); // completed
 	if (tok.type != TOK_EOF)
