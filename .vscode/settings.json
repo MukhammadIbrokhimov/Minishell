@@ -1,5 +1,6 @@
 {
 	"files.associations": {
-		"sadaf.h": "c"
+		"sadaf.h": "c",
+		"cstdlib": "c"
 	}
 }

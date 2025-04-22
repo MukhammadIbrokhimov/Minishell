@@ -6,62 +6,68 @@
 /*   By: mukibrok <mukibrok@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/22 10:57:14 by muxammad          #+#    #+#             */
-/*   Updated: 2025/04/22 14:59:08 by mukibrok         ###   ########.fr       */
+/*   Updated: 2025/04/22 17:57:31 by mukibrok         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../includes/sadaf.h"
 
 /**
- * parseredirs - Parses redirection operators and their target files
- * @cmd: Command to attach redirections to
- * @ps: Parser state containing input string and position
- *
- * Handles: < file, > file, >> file
- * Returns: Modified command with redirections attached
- *          Original command on syntax error (caller should check)
+ * parseredirs - Handles file redirections for commands
+ * @cmd: Original command structure
+ * @ps: Tracks position in the command string
+ * 
+ * What it does:
+ * - Processes < > >> operators
+ * - Links files to standard input/output
+ * - Creates new redirection commands when needed
+ * - Validates proper filename format after operators
+ * 
+ * Throws errors if:
+ * - Missing filename after < > >>
+ * - Memory allocation fails
+ * - Invalid redirection operator
+ * 
+ * Returns: Command structure with redirections attached
  */
 
 t_cmd *parseredirs(t_cmd *cmd, ParserState *ps)
 {
-	t_token op_tok, file_tok;
+	t_token	op_tok;
+	t_token	file_tok;
+	int		mode;
+	int		fd;
 	
-	while (1) {
-		// Peek next token to check for redirection operators
+	while (1)
+	{
 		op_tok = gettoken(ps);
 		if (op_tok.type != TOK_LT && op_tok.type != TOK_GT && op_tok.type != TOK_DGT) {
-			ps->s = op_tok.start; // Put token back
+			ps->s = op_tok.start;
 			break;
 		}
-		// Get the redirection target file
 		file_tok = gettoken(ps);
-		if (file_tok.type != TOK_WORD) {
-			fprintf(stderr, "Syntax error: Expected filename after redirection at %.*s\n",
-				(int)(file_tok.end - file_tok.start), file_tok.start);
-			return cmd;
-		}
-		// Create redirection command node
-		int mode, fd;
-		switch (op_tok.type) {
-			case TOK_LT:    // <
+		if (file_tok.type != TOK_WORD)
+			ft_exit("Syntax error: Expected filename after redirection at %.*s\0n");
+		switch (op_tok.type)
+		{
+			case TOK_LT:
 				mode = O_RDONLY;
-				fd = 0;     // stdin
+				fd = 0;
 				break;
-			case TOK_GT:    // >
+			case TOK_GT:
 				mode = O_WRONLY | O_CREAT | O_TRUNC;
-				fd = 1;     // stdout
+				fd = 1;
 				break;
-			case TOK_DGT:   // >>
+			case TOK_DGT:
 				mode = O_WRONLY | O_CREAT | O_APPEND;
-				fd = 1;     // stdout
+				fd = 1;
+				break;
+			default:
 				break;
 		}
 		t_cmd *newcmd = redircmd(cmd, file_tok.start, file_tok.end, mode, fd);
 		if (!newcmd)
-		{
-			fprintf(stderr, "Error: Failed to create redirection command\n");
-			return (NULL);
-		}
+			ft_exit("Error: Failed to create redirection command\n");
 		cmd = newcmd;
 	}
 	return (cmd);

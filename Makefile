@@ -7,7 +7,7 @@ CYAN    = \033[36m
 
 # Variables
 CC      = cc
-CFLAGS  = -Wall -Wextra -Werror
+CFLAGS  = -Wall -Wextra -Werror -g
 LIBFT_DIR = ./includes/libft
 LIBFT    = $(LIBFT_DIR)/libft.a
 INCLUDES = -I./includes -I$(LIBFT_DIR)

@@ -6,60 +6,44 @@
 /*   By: mukibrok <mukibrok@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/22 15:00:46 by mukibrok          #+#    #+#             */
-/*   Updated: 2025/04/22 15:12:05 by mukibrok         ###   ########.fr       */
+/*   Updated: 2025/04/22 17:39:49 by mukibrok         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../includes/sadaf.h"
 
 /**
- * parseblock - Parses a command block enclosed in parentheses
- * @ps: Parser state containing input string and position
+ * parseblock - Handles commands inside parentheses
+ * @ps: Tracks position in the command string
  * 
- * Returns: t_cmd* representing the parsed block command
- *          NULL on syntax error (caller should handle)
- *
- * Handles: ( command-list ) [redirections]
- * Performs full syntax validation and maintains parser state
+ * What it does:
+ * - Checks for opening parenthesis '('
+ * - Parses commands between parentheses
+ * - Checks for closing parenthesis ')'
+ * - Handles any file redirections (like < or >) after the block
+ * 
+ * Throws errors if:
+ * - Missing opening/closing parenthesis
+ * - Empty block contents
+ * - Redirection errors after the block
+ * 
+ * Returns: Command structure ready for execution
  */
 
  t_cmd *parseblock(ParserState *ps)
  {
-	 t_cmd *cmd;
-	 t_token tok;
-	 
-	 /* --- Phase 1: Validate block opening --- */
-	 tok = gettoken(ps); // completed
-	 if (tok.type != TOK_LPAREN)
-	 {
-		 fprintf(stderr, "Syntax error: Expected '(' to start block at %.*s\n", 
-				 (int)(tok.end - tok.start), tok.start);
-	 }
- 
-	 /* --- Phase 2: Parse block contents --- */
-	 if (!(cmd = parseline(ps))) // completed
-	 {
-		 fprintf(stderr, "Error: Failed to parse block contents\n");
-		 return NULL;
-	 }
- 
-	 /* --- Phase 3: Validate block closing --- */
+	t_cmd	*cmd;
+	t_token	tok;
+
+	tok = gettoken(ps);
+	if (tok.type != TOK_LPAREN)
+		ft_exit("Syntax error: Expected '(' to start block at %.*s\n");
+	if (!(cmd = parseline(ps)))
+		ft_exit("Error: Failed to parse block contents\n");
 	 tok = gettoken(ps);
 	 if (tok.type != TOK_RPAREN)
-	 {
-		 fprintf(stderr, "Syntax error: Unclosed block, expected ')' at %.*s\n",
-				 (int)(ps->end - tok.start), tok.start);
-		 //freecmd(cmd);  // Avoid memory leak
-		 return (NULL);
-	 }
- 
-	 /* --- Phase 4: Handle trailing redirections --- */
+		ft_exit("Syntax error: Unclosed block, expected ')'");
 	 if (!(cmd = parseredirs(cmd, ps)))
-	 {
-		 fprintf(stderr, "Error: Failed to parse redirections for block\n");
-		 //freecmd(cmd);
-		 return (NULL);
-	 }
- 
-	 return (cmd);
+		ft_exit("Error: Failed to parse redirections for block\n");
+	return (cmd);
  }

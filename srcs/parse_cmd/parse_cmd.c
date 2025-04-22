@@ -6,86 +6,85 @@
 /*   By: mukibrok <mukibrok@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/17 17:17:52 by mukibrok          #+#    #+#             */
-/*   Updated: 2025/04/22 15:09:10 by mukibrok         ###   ########.fr       */
+/*   Updated: 2025/04/22 18:40:27 by mukibrok         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../includes/sadaf.h"
 
-t_cmd	*parseexec(ParserState *ps)
-{
-	t_execcmd	*cmd;
-	t_cmd		*ret;
-	t_token		tok;
-	int			argc;
-
-	tok = gettoken(ps); // completed
-	if (tok.type == TOK_LPAREN)
-		return (parseblock(ps)); // completed
-	ps->s = tok.start;
-	ret = execcmd(); // completed
-	cmd = (t_execcmd *)ret;
-	argc = 0;
-	ret = parseredirs(ret, ps); // completed
-	while (1)
-	{
-		tok = gettoken(ps); // completed
-		if (tok.type == TOK_PIPE || tok.type == TOK_AND
-			|| tok.type == TOK_SEQ || tok.type == TOK_RPAREN
-			|| tok.type == TOK_EOF)
-		{
-			ps->s = tok.start;
-			break ;
-		}
-		if (tok.type != TOK_WORD)
-			fprintf(stderr, "syntax error: expected argument");
-		if (argc >= MAXARGS)
-			fprintf(stderr, "too many args");
-		cmd->argv[argc] = tok.start;
-		cmd->eargv[argc] = tok.end;
-		argc++;
-		ret = parseredirs(ret, ps); // completed
-	}
-	cmd->argv[argc] = 0;
-	cmd->eargv[argc] = 0;
-	return (ret);
-}
+/**
+ * parsepipe - Processes piped command sequences
+ * @ps: Tracks parsing position in input string
+ * 
+ * What it does:
+ * - Starts with basic commands (parseexec)
+ * - If finds pipe symbol "|", chains commands
+ * - Handles multiple pipes (recursive approach)
+ * - Example: "ls | grep txt | wc -l"
+ * 
+ * Throws errors if:
+ * - Pipe symbol appears without commands
+ * - Memory allocation fails
+ * 
+ * Returns: Command structure with pipe connections
+ */
 
 t_cmd	*parsepipe(ParserState *ps)
 {
 	t_cmd	*cmd;
 	t_token	tok;
 
-	cmd = parseexec(ps); // developing
-	tok = gettoken(ps); // completed
-	if (tok.type == TOK_PIPE) // if |
+	cmd = parseexec(ps);
+	tok = gettoken(ps);
+	if (tok.type == TOK_PIPE)
 	{
-		cmd = pipecmd(cmd, parsepipe(ps)); // completed
+		cmd = pipecmd(cmd, parsepipe(ps));
 		if (!cmd)
-			fprintf(stderr, "Pipe command failed\n");
+			ft_exit("Pipecmd failed\n");
 	}
 	else
 		ps->s = tok.start;
 	return (cmd);
 }
 
+/**
+ * parseline - Manages command separators (; and &)
+ * @ps: Tracks current parsing position
+ * 
+ * Handles:
+ * - Command sequencing with ";"
+ * - Background execution with "&"
+ * - Recursive processing of multiple separators
+ * - Example: "ls &; ps ; top"
+ * 
+ * Throws errors if:
+ * - Invalid separator placement
+ * - Memory allocation fails
+ * 
+ * Returns: Command structure with sequencing/background info
+ */
+
 t_cmd	*parseline(ParserState *ps)
 {
 	t_cmd	*cmd;
 	t_token	tok;
 
-	cmd = parsepipe(ps); // developing
+	cmd = parsepipe(ps);
 	while (1)
 	{
-		tok = gettoken(ps); // tokenize completed
-		if (tok.type == TOK_AND) // if &
+		tok = gettoken(ps);
+		if (tok.type == TOK_AND)
 		{
-			cmd = backcmd(cmd); // completed
+			cmd = backcmd(cmd);
 			if (!cmd)
-				fprintf(stderr, "Backcmd failed\n");
+				ft_exit("Backcmd failed\n");
 		}
-		else if (tok.type == TOK_SEQ) // if ;
-			cmd = listcmd(cmd, parseline(ps)); // completed
+		else if (tok.type == TOK_SEQ)
+		{
+			cmd = listcmd(cmd, parseline(ps));
+			if (!cmd)
+				ft_exit("Listcmd failed\n");
+		}
 		else
 		{
 			ps->s = tok.start;
@@ -95,6 +94,24 @@ t_cmd	*parseline(ParserState *ps)
 	return (cmd);
 }
 
+/**
+ * parsecmd - Converts raw command text into executable structure
+ * @buf: User's input command string
+ * 
+ * What it does:
+ * - Prepares command for processing
+ * - Converts text to command structure
+ * - Checks for leftover unprocessed text
+ * - Handles final syntax validation
+ * 
+ * Throws errors if:
+ * - Extra text remains after command
+ * - Invalid command structure
+ * - Memory allocation fails
+ * 
+ * Returns: Ready-to-execute command structure
+ */
+
 t_cmd	*parsecmd(char *buf)
 {
 	ParserState	ps;
@@ -103,56 +120,46 @@ t_cmd	*parsecmd(char *buf)
 
 	ps.s = buf;
 	ps.end = buf + ft_strlen(buf);
-	cmd = parseline(&ps); // completed
-	tok = gettoken(&ps); // completed
+	cmd = parseline(&ps);
+	tok = gettoken(&ps);
 	if (tok.type != TOK_EOF)
 	{
-		fprintf(stderr, "syntax error: unexpected token at '%.*s'\n",
-			(int)(tok.end - tok.start), tok.start);
-		free_cmd(cmd); // free the command structure
-		exit(EXIT_FAILURE);
+		free_cmd(cmd);
+		ft_exit("syntax error: unexpected token\n");
 	}
 	return (cmd);
-}
-
-int fork1()
-{
-	int	pid;
-
-	pid = fork();
-	if (pid < 0)
-		fprintf(stderr, "Process error\n");
-	return (pid);
 }
 
 int
 main(void)
 {
-  int fd;
-  char *buf;
+	int fd;
+	char *buf;
 
-  // Ensure that three file descriptors are open.
-  while((fd = open("console", O_RDWR)) >= 0){
-    if(fd >= 3){ // if we have more than stdin stdout and stderr close file descriptor
-      close(fd);
-      break;
-    }
-  }
-
-  // Read and run input commands.
-  while(1){
+	while((fd = open("console", O_RDWR)) >= 0){
+		if(fd >= 3){ // if we have more than stdin stdout and stderr close file descriptor
+		close(fd);
+		break;
+		}
+	}
+	while(1){
 	buf = getcmd();
 	if (!buf)
 		break ;
-    if(buf[0] == 'c' && buf[1] == 'd' && buf[2] == ' '){
-      // Chdir must be called by the parent, not the child.
-      buf[strlen(buf)-1] = 0;  // chop \n
-      if(chdir(buf+3) < 0)
-        fprintf(stderr, "cannot cd %s\n", buf+3);
-	  free(buf);
-      continue;
-    }
-    if(fork1() == 0){
+	if (buf[0] == '~')
+	{
+		free(buf);
+		break ;
+	}
+	if(buf[0] == 'c' && buf[1] == 'd' && buf[2] == ' '){
+		// Chdir must be called by the parent, not the child.
+		buf[strlen(buf)-1] = 0;  // chop \n
+		if(chdir(buf+3) < 0)
+		fprintf(stderr, "cannot cd %s\n", buf+3);
+		free(buf);
+		continue;
+	}
+	if(fork1() == 0){
 		t_cmd *cmd = parsecmd(buf);
 		if (cmd->type == EXEC) {
 			t_execcmd *ecmd = (t_execcmd *)cmd;
@@ -177,8 +184,8 @@ main(void)
 		exit(0);
 	}
 	free(buf);
-    wait(NULL);
-  }
-  
-  exit(0);
+	wait(NULL);
+	}
+	clear_history();
+	exit(0);
 }
