@@ -6,7 +6,7 @@
 /*   By: muxammad <muxammad@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/15 19:48:31 by muxammad          #+#    #+#             */
-/*   Updated: 2025/04/21 16:07:16 by muxammad         ###   ########.fr       */
+/*   Updated: 2025/04/22 11:19:01 by muxammad         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -115,6 +115,7 @@ typedef struct s_shell {
 /* Main functions */
 t_shell	*init_shell(char **envp);
 void	free_shell(t_shell *shell);
+char	*getcmd(void);
 int		sadaf_prompt(t_shell *shell);
 int		process_command(char *buf, t_shell *shell);
 
@@ -123,9 +124,9 @@ t_cmd   *parsecmd(char *buf);
 t_cmd	*parseline(ParserState *ps);
 t_cmd	*parsepipe(ParserState *ps);
 t_cmd	*parseexec(ParserState *ps);
-t_cmd   *parseredirs(t_cmd *cmd, ParserState **ps);
+t_cmd   *parseredirs(t_cmd *cmd, ParserState *ps);
 t_cmd	*parseblock(ParserState *ps);
-t_token gettoken(ParserState *ps);
+t_token	gettoken(ParserState *ps);
 t_cmd	*nulterminate(t_cmd *cmd);
 
 /* Command constructors */
