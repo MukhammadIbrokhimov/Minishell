@@ -6,7 +6,7 @@
 /*   By: mukibrok <mukibrok@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/21 13:48:08 by muxammad          #+#    #+#             */
-/*   Updated: 2025/04/22 17:36:40 by mukibrok         ###   ########.fr       */
+/*   Updated: 2025/04/24 15:13:35 by mukibrok         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,6 +28,27 @@
  *   - Location: Where this part starts and ends in the command
  */
 
+void	assign_token(t_token *tok, char **s)
+{
+	switch(**s)
+	{
+		case '|': (*tok).type = TOK_PIPE; (*s)++; break;
+		case '&': (*tok).type = TOK_AND; (*s)++; break;
+		case ';': (*tok).type = TOK_SEQ; (*s)++; break;
+		case '<': (*tok).type = TOK_LT; (*s)++; break;
+		case '>':
+			(*s)++;
+			if(**s == '>') { (*tok).type = TOK_DGT; (*s)++; }
+			else (*tok).type = TOK_GT;
+			break;
+		case '(': (*tok).type = TOK_LPAREN; (*s)++; break;
+		case ')': (*tok).type = TOK_RPAREN; (*s)++; break;
+		default:
+			(*tok).type = TOK_WORD;
+		break;
+	}
+}
+
 t_token gettoken(ParserState *ps)
 {
 	char *s;
@@ -43,24 +64,11 @@ t_token gettoken(ParserState *ps)
 		ps->s = s;
 		return tok;
 	}
-	switch(*s)
+	assign_token(&tok, &s);
+	if(tok.type == TOK_WORD)
 	{
-		case '|': tok.type = TOK_PIPE; s++; break;
-		case '&': tok.type = TOK_AND; s++; break;
-		case ';': tok.type = TOK_SEQ; s++; break;
-		case '<': tok.type = TOK_LT; s++; break;
-		case '>':
-		s++;
-		if(*s == '>') { tok.type = TOK_DGT; s++; }
-		else tok.type = TOK_GT;
-		break;
-		case '(': tok.type = TOK_LPAREN; s++; break;
-		case ')': tok.type = TOK_RPAREN; s++; break;
-		default:
-		tok.type = TOK_WORD;
 		while(s < ps->end && !isspace(*s) && !strchr(SYMBOLS, *s))
 			s++;
-		break;
 	}
 	tok.end = s;
 	ps->s = s;

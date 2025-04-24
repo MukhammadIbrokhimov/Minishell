@@ -6,7 +6,7 @@
 /*   By: mukibrok <mukibrok@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/22 12:53:29 by mukibrok          #+#    #+#             */
-/*   Updated: 2025/04/24 14:23:09 by mukibrok         ###   ########.fr       */
+/*   Updated: 2025/04/24 15:38:43 by mukibrok         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,14 +28,19 @@ void free_cmd(t_cmd *cmd)
 	{
 		t_execcmd *ecmd = (t_execcmd *)cmd;
 		for (int i = 0; ecmd->argv[i]; i++)
-			free(ecmd->argv[i]);
+		{
+			if (ecmd->argv[i])
+				free(ecmd->argv[i]);
+		}
 	}
 	else if (cmd->type == REDIR)
 	{
 		t_redircmd *rcmd = (t_redircmd *)cmd;
 		free_cmd(rcmd->cmd);
-		free(rcmd->file);
-		free(rcmd->efile);
+		if (rcmd->file)
+			free(rcmd->file);
+		if (rcmd->efile)
+			free(rcmd->efile);
 	}
 	else if (cmd->type == PIPE)
 	{

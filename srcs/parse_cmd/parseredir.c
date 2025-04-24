@@ -6,7 +6,7 @@
 /*   By: mukibrok <mukibrok@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/22 10:57:14 by muxammad          #+#    #+#             */
-/*   Updated: 2025/04/22 17:57:31 by mukibrok         ###   ########.fr       */
+/*   Updated: 2025/04/24 15:19:05 by mukibrok         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,7 +47,7 @@ t_cmd *parseredirs(t_cmd *cmd, ParserState *ps)
 		}
 		file_tok = gettoken(ps);
 		if (file_tok.type != TOK_WORD)
-			ft_exit("Syntax error: Expected filename after redirection at %.*s\0n");
+			ft_exit("Syntax error: Expected filename after redirection\n");
 		switch (op_tok.type)
 		{
 			case TOK_LT:
