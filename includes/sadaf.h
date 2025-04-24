@@ -6,7 +6,7 @@
 /*   By: mukibrok <mukibrok@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/15 19:48:31 by muxammad          #+#    #+#             */
-/*   Updated: 2025/04/22 17:59:28 by mukibrok         ###   ########.fr       */
+/*   Updated: 2025/04/24 18:07:02 by mukibrok         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,7 +37,7 @@
 # define LIST  4
 # define BACK  5
 
-# define MAXARGS 10
+# define MAXARGS 100
 
 extern int g_signal_received;
 
@@ -118,7 +118,6 @@ typedef struct s_shell {
 /* Main functions */
 t_shell	*init_shell(char **envp);
 char	*getcmd(void);
-int		sadaf_prompt(t_shell *shell);
 int		process_command(char *buf, t_shell *shell);
 
 // cleaner functions
