@@ -45,7 +45,7 @@ static int	execute_right_cmd(t_pipecmd *pcmd, t_shell *shell, int *fd)
 {
 	int	pid;
 
-	pid = fork_safely();
+	pid = protected_fork();
 	if (pid == 0)
 	{
 		setup_pipe_input(fd);

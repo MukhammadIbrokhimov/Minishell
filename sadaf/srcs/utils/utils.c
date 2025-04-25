@@ -16,28 +16,27 @@ void ft_perror(char *msg)
     ft_putstr_fd("\n", STDERR_FILENO);
 }
 
-int fork_safely(void)
+int	protected_fork(void)
 {
-    int pid;
-    
-    pid = fork();
-    if (pid < 0)
-    {
-        ft_perror("fork");
-        exit(1);
-    }
-    
-    return (pid);
+	int	pid;
+
+	pid = fork();
+	if (pid < 0)
+	{
+		ft_perror("fork");
+		exit(1);
+	}
+	return (pid);
 }
 
 void *ft_calloc(size_t nmemb, size_t size)
 {
     void *ptr;
-    
+
     ptr = malloc(nmemb * size);
     if (!ptr)
         return (NULL);
-    
+
     ft_bzero(ptr, nmemb * size);
     return (ptr);
 }
@@ -69,17 +68,17 @@ void expand_variables(t_execcmd *ecmd, t_shell *shell)
     char *expanded;
     char *var;
     char *dollar;
-    
+
     for (i = 0; ecmd->argv[i]; i++)
     {
         dollar = strchr(ecmd->argv[i], '$');
         if (!dollar)
             continue;
-        
+
         // Simple variable expansion, doesn't handle quotes or nested variables
         expanded = ft_strdup("");
         j = 0;
-        
+
         while (ecmd->argv[i][j])
         {
             if (ecmd->argv[i][j] == '$')
@@ -89,30 +88,30 @@ void expand_variables(t_execcmd *ecmd, t_shell *shell)
                 {
                     char exit_str[12];
                     snprintf(exit_str, sizeof(exit_str), "%d", shell->exit_status);
-                    
+
                     char *tmp = expanded;
                     expanded = ft_strjoin(expanded, exit_str);
                     free(tmp);
                     j += 2;
                     continue;
                 }
-                
+
                 // Extract variable name
                 int start = j + 1;
                 while (ecmd->argv[i][j + 1] && (ft_isalnum(ecmd->argv[i][j + 1]) || ecmd->argv[i][j + 1] == '_'))
                     j++;
-                
+
                 if (start <= j)
                 {
                     var = ft_substr(ecmd->argv[i], start, j - start + 1);
                     char *value = ft_getenv(var, shell);
-                    
+
                     char *tmp = expanded;
                     if (value)
                         expanded = ft_strjoin(expanded, value);
                     else
                         expanded = ft_strjoin(expanded, "");
-                    
+
                     free(tmp);
                     free(var);
                 }
@@ -124,10 +123,10 @@ void expand_variables(t_execcmd *ecmd, t_shell *shell)
                 expanded = ft_strjoin(expanded, tmp_str);
                 free(tmp);
             }
-            
+
             j++;
         }
-        
+
         free(ecmd->argv[i]);
         ecmd->argv[i] = expanded;
     }
@@ -136,12 +135,12 @@ void expand_variables(t_execcmd *ecmd, t_shell *shell)
 void cleanup_tokens(char **tokens)
 {
     int i;
-    
+
     if (!tokens)
         return;
-    
+
     for (i = 0; tokens[i]; i++)
         free(tokens[i]);
-    
+
     free(tokens);
 }
