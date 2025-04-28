@@ -1,29 +1,27 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_lstadd_back.c                                   :+:      :+:    :+:   */
+/*   ft_getenv.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: muxammad <muxammad@student.42.fr>          +#+  +:+       +#+        */
+/*   By: gansari <gansari@student.42berlin.de>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/11/15 19:25:30 by mukibrok          #+#    #+#             */
-/*   Updated: 2024/12/22 20:17:19 by muxammad         ###   ########.fr       */
+/*   Created: 2025/04/24 15:11:41 by gansari           #+#    #+#             */
+/*   Updated: 2025/04/24 15:11:43 by gansari          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "libft.h"
+#include "../../includes/sadaf.h"
 
-void	ft_lstadd_back(t_list **lst, t_list *new)
+char	*ft_getenv(char *name, t_shell *shell)
 {
-	t_list	*node;
+	t_env	*current;
 
-	if (*lst == NULL)
-		*lst = new;
-	else
+	current = shell->env_list;
+	while (current)
 	{
-		node = *lst;
-		while (node->next != NULL)
-			node = node->next;
-		node->next = new;
-		new->prev = node;
+		if (ft_strcmp(current->name, name) == 0)
+			return (current->value);
+		current = current->next;
 	}
+	return (NULL);
 }

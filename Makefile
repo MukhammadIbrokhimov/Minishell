@@ -11,11 +11,17 @@ CFLAGS  = -Wall -Wextra -Werror -g
 LIBFT_DIR = ./includes/libft
 LIBFT    = $(LIBFT_DIR)/libft.a
 INCLUDES = -I./includes -I$(LIBFT_DIR)
-SRC_DIR  = ./srcs/*
-SRC      = $(wildcard $(SRC_DIR)/*.c)
+SRC_DIR  = ./srcs
+SRC      = $(wildcard $(SRC_DIR)/*.c) \
+           $(wildcard $(SRC_DIR)/builtins/*.c) \
+           $(wildcard $(SRC_DIR)/cleaners/*.c) \
+           $(wildcard $(SRC_DIR)/execution/*.c) \
+           $(wildcard $(SRC_DIR)/parsing/*.c) \
+           $(wildcard $(SRC_DIR)/utils/*.c) \
+           $(wildcard $(SRC_DIR)/env/*.c)
 OBJ_DIR  = ./obj
 OBJ      = $(patsubst $(SRC_DIR)/%.c,$(OBJ_DIR)/%.o,$(SRC))
-EXEC     = minishell
+EXEC     = sadaf
 
 # Default rule
 all: $(LIBFT) $(EXEC)
@@ -40,6 +46,12 @@ $(LIBFT):
 # Create obj directory if it doesn't exist
 $(OBJ_DIR):
 	@mkdir -p $(OBJ_DIR)
+	@mkdir -p $(OBJ_DIR)/builtins
+	@mkdir -p $(OBJ_DIR)/cleaners
+	@mkdir -p $(OBJ_DIR)/execution
+	@mkdir -p $(OBJ_DIR)/parsing
+	@mkdir -p $(OBJ_DIR)/utils
+	@mkdir -p $(OBJ_DIR)/env
 
 # Clean up object files
 clean:
