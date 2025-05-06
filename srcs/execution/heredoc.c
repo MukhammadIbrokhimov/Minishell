@@ -3,14 +3,14 @@
 /*                                                        :::      ::::::::   */
 /*   heredoc.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: gansari <gansari@student.42berlin.de>      +#+  +:+       +#+        */
+/*   By: mukibrok <mukibrok@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/24 14:39:03 by gansari           #+#    #+#             */
-/*   Updated: 2025/04/24 14:39:05 by gansari          ###   ########.fr       */
+/*   Updated: 2025/05/06 14:47:39 by mukibrok         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../includes/sadaf.h"
+#include "../../includes/sadaf.h"
 
 static int	setup_heredoc_pipe(int *fd)
 {

@@ -6,7 +6,7 @@
 /*   By: mukibrok <mukibrok@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/24 14:35:21 by gansari           #+#    #+#             */
-/*   Updated: 2025/04/24 18:05:59 by mukibrok         ###   ########.fr       */
+/*   Updated: 2025/05/06 14:48:35 by mukibrok         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,7 +45,7 @@ static int	execute_right_cmd(t_pipecmd *pcmd, t_shell *shell, int *fd)
 {
 	int	pid;
 
-	pid = fork_safely();
+	pid = protected_fork();
 	if (pid == 0)
 	{
 		setup_pipe_input(fd);

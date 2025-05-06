@@ -6,7 +6,7 @@
 /*   By: mukibrok <mukibrok@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/17 16:38:55 by mukibrok          #+#    #+#             */
-/*   Updated: 2025/04/24 18:05:48 by mukibrok         ###   ########.fr       */
+/*   Updated: 2025/05/06 14:48:53 by mukibrok         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,14 +22,29 @@ int	main(int argc, char **argv, char **envp)
 	shell = init_shell(envp);
 	if (!shell)
 		return (perror("Failed to initialize shell"), EXIT_FAILURE);
+	setup_signals(0); // Set up signals for interactive mode
 	while(1)
 	{
 		buf = getcmd();
-		if(buf[0] == 'c' && buf[1] == 'd' && buf[2] == ' ')
-		{
-			buf[strlen(buf)-1] = 0;
-			if(chdir(buf+3) < 0)
-				fprintf(stderr, "cannot cd %s\n", buf+3);
+		if (!buf) // Handle EOF (Ctrl+D)
+			break;
+		if (strncmp(buf, "cd ", 3) == 0 || strcmp(buf, "cd") == 0) {
+			// Strip newline
+			buf[strcspn(buf, "\n")] = 0;
+		
+			char *path = buf + 2;
+			while (*path == ' ') path++; // Skip all spaces after 'cd'
+		
+			if (*path == 0) {
+				// No path specified, go to HOME
+				path = getenv("HOME");
+				if (!path) path = "/";
+			}
+		
+			if (chdir(path) < 0)
+				fprintf(stderr, "cannot cd to '%s'\n", path);
+		
+			free(buf);
 			continue;
 		}
 		if(fork1() == 0)

@@ -1,29 +1,27 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_lstclear.c                                      :+:      :+:    :+:   */
+/*   ft_getenv.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mukibrok <mukibrok@student.42.fr>          +#+  +:+       +#+        */
+/*   By: gansari <gansari@student.42berlin.de>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/11/16 08:19:35 by mukibrok          #+#    #+#             */
-/*   Updated: 2024/11/17 14:25:56 by mukibrok         ###   ########.fr       */
+/*   Created: 2025/04/24 15:11:41 by gansari           #+#    #+#             */
+/*   Updated: 2025/04/24 15:11:43 by gansari          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "libft.h"
+#include "../../includes/sadaf.h"
 
-void	ft_lstclear(t_list **lst, void (*del)(void *))
+char	*ft_getenv(char *name, t_shell *shell)
 {
-	t_list	*tmp;
+	t_env	*current;
 
-	if (!lst)
-		lst = NULL;
-	while (*lst)
+	current = shell->env_list;
+	while (current)
 	{
-		tmp = (*lst)->next;
-		ft_lstdelone(*lst, del);
-		*lst = tmp;
+		if (ft_strcmp(current->name, name) == 0)
+			return (current->value);
+		current = current->next;
 	}
-	free(*lst);
-	*lst = NULL;
+	return (NULL);
 }

@@ -6,7 +6,7 @@
 /*   By: mukibrok <mukibrok@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/15 19:48:31 by muxammad          #+#    #+#             */
-/*   Updated: 2025/04/24 18:07:02 by mukibrok         ###   ########.fr       */
+/*   Updated: 2025/05/06 14:42:41 by mukibrok         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,7 +54,7 @@ enum TokenType {
 	TOK_RPAREN,
 	TOK_UNKNOWN
 };
- 
+
 typedef struct s_token {
 	enum TokenType type;
 	char *start;
@@ -144,17 +144,22 @@ t_cmd   *backcmd(t_cmd *subcmd);
 
 /* Environment handling */
 t_env	*init_envp(char **envp);
+t_env	*create_env_node(char *name, char *value);
+
+/* Environment utils */
+void	add_env_node(t_shell *shell, t_env *new_node);
+char	**env_to_array(t_env *env_list);
 
 /* Builtins */
-int     is_builtin(char *cmd);
-int     exec_builtin(t_execcmd *ecmd, t_shell *shell);
-int     builtin_echo(t_execcmd *ecmd, t_shell *shell);
-int     builtin_cd(t_execcmd *ecmd, t_shell *shell);
-int     builtin_pwd(t_execcmd *ecmd, t_shell *shell);
-int     builtin_export(t_execcmd *ecmd, t_shell *shell);
-int     builtin_unset(t_execcmd *ecmd, t_shell *shell);
-int     builtin_env(t_execcmd *ecmd, t_shell *shell);
-int     builtin_exit(t_execcmd *ecmd, t_shell *shell);
+int		is_builtin(char *cmd);
+int		exec_builtin(t_execcmd *ecmd, t_shell *shell);
+int		builtin_echo(t_execcmd *ecmd, t_shell *shell);
+int		builtin_cd(t_execcmd *ecmd, t_shell *shell);
+int		builtin_pwd(t_execcmd *ecmd, t_shell *shell);
+int		builtin_export(t_execcmd *ecmd, t_shell *shell);
+int		builtin_unset(t_execcmd *ecmd, t_shell *shell);
+int		builtin_env(t_execcmd *ecmd, t_shell *shell);
+int		builtin_exit(t_execcmd *ecmd, t_shell *shell);
 
 /* Heredoc handling */
 int     handle_heredoc(char *delimiter, t_shell *shell);
@@ -181,10 +186,11 @@ void    handle_background(t_backcmd *bcmd, t_shell *shell);
 /* Utils */
 void    ft_error(char *msg);
 void    ft_perror(char *msg);
-int     fork_safely(void);
+int		protected_fork(void);
 char    *ft_getenv(char *name, t_shell *shell);
 void    expand_variables(t_execcmd *ecmd, t_shell *shell);
 void    cleanup_tokens(char **tokens);
 int		fork1(void);
+void	print_cmd(t_cmd *cmd);
 
 #endif

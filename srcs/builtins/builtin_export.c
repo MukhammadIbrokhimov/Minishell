@@ -32,7 +32,7 @@ static void	parse_export_arg(char *arg, char **name, char **value)
 {
 	char	*equal_sign;
 
-	equal_sign = strchr(arg, '=');
+	equal_sign = ft_strchr(arg, '=');
 	if (!equal_sign)
 	{
 		*name = ft_strdup(arg);
