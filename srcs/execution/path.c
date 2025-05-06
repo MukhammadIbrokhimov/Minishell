@@ -6,7 +6,7 @@
 /*   By: mukibrok <mukibrok@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/24 14:23:36 by gansari           #+#    #+#             */
-/*   Updated: 2025/05/06 14:47:18 by mukibrok         ###   ########.fr       */
+/*   Updated: 2025/05/06 14:53:14 by mukibrok         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,26 +57,6 @@ char	*find_command_path(char *cmd, t_shell *shell)
 		i++;
 	}
 	cleanup_tokens(paths);
-	return (NULL);
-}
-
-char	*check_direct_path(char *cmd)
-{
-	if (access(cmd, X_OK) == 0)
-		return (ft_strdup(cmd));
-	return (NULL);
-}
-
-char	*try_path(char *base_path, char *cmd)
-{
-	char	*path;
-
-	path = build_path(base_path, cmd);
-	if (!path)
-		return (NULL);
-	if (access(path, X_OK) == 0)
-		return (path);
-	free(path);
 	return (NULL);
 }
 

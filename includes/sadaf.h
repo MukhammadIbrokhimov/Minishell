@@ -6,7 +6,7 @@
 /*   By: mukibrok <mukibrok@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/15 19:48:31 by muxammad          #+#    #+#             */
-/*   Updated: 2025/05/06 14:42:41 by mukibrok         ###   ########.fr       */
+/*   Updated: 2025/05/06 17:18:37 by mukibrok         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,6 +36,7 @@
 # define PIPE  3
 # define LIST  4
 # define BACK  5
+# define HEREDOC 6
 
 # define MAXARGS 100
 
@@ -50,6 +51,7 @@ enum TokenType {
 	TOK_LT,
 	TOK_GT,
 	TOK_DGT,
+	TOK_DLT,
 	TOK_LPAREN,
 	TOK_RPAREN,
 	TOK_UNKNOWN
@@ -134,6 +136,7 @@ t_cmd   *parseredirs(t_cmd *cmd, ParserState *ps);
 t_cmd	*parseblock(ParserState *ps);
 t_token	gettoken(ParserState *ps);
 t_cmd	*nulterminate(t_cmd *cmd);
+t_cmd	*set_heredoc(t_cmd *subcmd, char *file, char *efile);
 
 /* Command constructors */
 t_cmd   *execcmd(void);
@@ -192,5 +195,6 @@ void    expand_variables(t_execcmd *ecmd, t_shell *shell);
 void    cleanup_tokens(char **tokens);
 int		fork1(void);
 void	print_cmd(t_cmd *cmd);
+t_cmd *nulterminate(t_cmd *cmd);
 
 #endif

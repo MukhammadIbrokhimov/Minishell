@@ -129,6 +129,14 @@ void print_cmd(t_cmd *cmd)
 			print_cmd(bcmd->cmd);
 			break;
 		}
+		case HEREDOC:
+		{
+			t_redircmd *rcmd = (t_redircmd *)cmd;
+			printf("HEREDOC command:\n");
+			printf("  file: %s\n", rcmd->file);
+			print_cmd(rcmd->cmd);
+			break;
+		}
 		default:
 			printf("Unknown command type: %d\n", cmd->type);
 	}
