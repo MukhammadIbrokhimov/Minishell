@@ -6,7 +6,7 @@
 /*   By: mukibrok <mukibrok@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/21 13:48:08 by muxammad          #+#    #+#             */
-/*   Updated: 2025/04/24 15:13:35 by mukibrok         ###   ########.fr       */
+/*   Updated: 2025/05/06 16:16:43 by mukibrok         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,7 +35,11 @@ void	assign_token(t_token *tok, char **s)
 		case '|': (*tok).type = TOK_PIPE; (*s)++; break;
 		case '&': (*tok).type = TOK_AND; (*s)++; break;
 		case ';': (*tok).type = TOK_SEQ; (*s)++; break;
-		case '<': (*tok).type = TOK_LT; (*s)++; break;
+		case '<':
+			(*s)++;
+			if(**s == '<') { (*tok).type = TOK_DLT; (*s)++; }
+			else (*tok).type = TOK_LT;
+			break;
 		case '>':
 			(*s)++;
 			if(**s == '>') { (*tok).type = TOK_DGT; (*s)++; }
@@ -73,4 +77,50 @@ t_token gettoken(ParserState *ps)
 	tok.end = s;
 	ps->s = s;
 	return (tok);
+}
+
+// NUL-terminate all the counted strings.
+t_cmd *nulterminate(t_cmd *cmd)
+{
+	int			i;
+	t_backcmd	*bcmd;
+	t_execcmd	*ecmd;
+	t_listcmd	*lcmd;
+	t_pipecmd	*pcmd;
+	t_redircmd	*rcmd;
+
+	if (cmd == 0)
+		return 0;
+	switch (cmd->type)
+	{
+		case EXEC:
+			ecmd = (t_execcmd *)cmd;
+			for (i = 0; ecmd->argv[i]; i++)
+				*ecmd->eargv[i] = '\0';
+			break;
+
+		case REDIR:
+			rcmd = (t_redircmd *)cmd;
+			nulterminate(rcmd->cmd);
+			*rcmd->efile = '\0';
+			break;
+
+		case PIPE:
+			pcmd = (t_pipecmd *)cmd;
+			nulterminate(pcmd->left);
+			nulterminate(pcmd->right);
+			break;
+
+		case LIST:
+			lcmd = (t_listcmd *)cmd;
+			nulterminate(lcmd->left);
+			nulterminate(lcmd->right);
+			break;
+
+		case BACK:
+			bcmd = (t_backcmd *)cmd;
+			nulterminate(bcmd->cmd);
+			break;
+	}
+	return cmd;
 }
