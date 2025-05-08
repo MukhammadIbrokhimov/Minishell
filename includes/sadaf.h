@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   sadaf.h                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mukibrok <mukibrok@student.42.fr>          +#+  +:+       +#+        */
+/*   By: codespace <codespace@student.42.fr>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/15 19:48:31 by muxammad          #+#    #+#             */
-/*   Updated: 2025/05/06 17:18:37 by mukibrok         ###   ########.fr       */
+/*   Updated: 2025/05/08 15:37:43 by codespace        ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -183,6 +183,13 @@ void    runcmd(t_cmd *cmd, t_shell *shell);
 void    execute_command(t_execcmd *ecmd, t_shell *shell);
 void    handle_redirections(t_redircmd *rcmd, t_shell *shell);
 void    handle_pipe(t_pipecmd *pcmd, t_shell *shell);
+int		execute_left_cmd(t_pipecmd *pcmd, t_shell *shell, int *fd);
+int		execute_right_cmd(t_pipecmd *pcmd, t_shell *shell, int *fd);
+int		create_pipe(int *fd);
+void	cleanup_pipe(int *fd, int pid1);
+void	safe_close(int fd);
+int		dup_and_report(int fd);
+int		close_and_report(int fd);
 void    handle_list(t_listcmd *lcmd, t_shell *shell);
 void    handle_background(t_backcmd *bcmd, t_shell *shell);
 
@@ -196,5 +203,7 @@ void    cleanup_tokens(char **tokens);
 int		fork1(void);
 void	print_cmd(t_cmd *cmd);
 t_cmd *nulterminate(t_cmd *cmd);
+int		setup_pipe_output(int *fd);
+int		setup_pipe_input(int *fd);
 
 #endif
