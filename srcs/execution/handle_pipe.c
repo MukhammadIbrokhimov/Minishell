@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   handle_pipe.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: gansari <gansari@student.42berlin.de>      +#+  +:+       +#+        */
+/*   By: codespace <codespace@student.42.fr>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/24 14:35:21 by gansari           #+#    #+#             */
-/*   Updated: 2025/05/07 14:10:47 by gansari          ###   ########.fr       */
+/*   Updated: 2025/05/08 15:25:07 by codespace        ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,7 +50,7 @@ static int	close_pipe_fds(int *fd)
  * @param fd  Array containing pipe file descriptors [read_end, write_end]
  * @return    0 on success, -1 on error
  */
-static int	setup_pipe_input(int *fd)
+int	setup_pipe_input(int *fd)
 {
 	if (close_and_report(0) < 0)
 		return (-1);
@@ -80,7 +80,7 @@ static int	setup_pipe_input(int *fd)
  * @param fd  Array containing pipe file descriptors [read_end, write_end]
  * @return    0 on success, -1 on error
  */
-static int	setup_pipe_output(int *fd)
+int	setup_pipe_output(int *fd)
 {
 	if (close_and_report(1) < 0)
 		return (-1);

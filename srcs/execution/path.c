@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   path.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: gansari <gansari@student.42berlin.de>      +#+  +:+       +#+        */
+/*   By: codespace <codespace@student.42.fr>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/24 14:23:36 by gansari           #+#    #+#             */
-/*   Updated: 2025/05/07 17:07:46 by gansari          ###   ########.fr       */
+/*   Updated: 2025/05/08 15:37:06 by codespace        ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,7 +30,7 @@
  *
  * NOTE: The caller must free the returned string to avoid memory leaks.
  */
-static char	*check_direct_path(char *cmd)
+char	*check_direct_path(char *cmd)
 {
 	if (access(cmd, X_OK) == 0)
 		return (ft_strdup(cmd));
@@ -55,7 +55,7 @@ static char	*check_direct_path(char *cmd)
  *
  * NOTE: The caller must free the returned string to avoid memory leaks.
  */
-static char	*try_path(char *base_path, char *cmd)
+char	*try_path(char *base_path, char *cmd)
 {
 	char	*path;
 
@@ -88,7 +88,7 @@ static char	*try_path(char *base_path, char *cmd)
  *
  * NOTE: The caller must free the returned array to avoid memory leaks.
  */
-static char	**parse_path(t_env *env_list)
+char	**parse_path(t_env *env_list)
 {
 	t_env	*current;
 	char	**paths;
@@ -123,7 +123,7 @@ static char	**parse_path(t_env *env_list)
  *
  * NOTE: The caller must free the returned string to avoid memory leaks.
  */
-static char	*build_path(char *dir, char *cmd)
+char	*build_path(char *dir, char *cmd)
 {
 	char	*path;
 	char	*tmp;
