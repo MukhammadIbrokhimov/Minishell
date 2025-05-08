@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parseexec.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mukibrok <mukibrok@student.42.fr>          +#+  +:+       +#+        */
+/*   By: codespace <codespace@student.42.fr>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/22 16:41:05 by mukibrok          #+#    #+#             */
-/*   Updated: 2025/04/22 17:42:51 by mukibrok         ###   ########.fr       */
+/*   Updated: 2025/05/08 17:38:41 by codespace        ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,7 +58,7 @@ t_cmd	*parseexec(ParserState *ps)
 		{
 			ps->s = tok.start;
 			break ;
-		}
+		}		
 		if (tok.type != TOK_WORD)
 		{
 			free_cmd(ret);
