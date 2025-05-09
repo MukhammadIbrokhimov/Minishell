@@ -6,7 +6,7 @@
 /*   By: codespace <codespace@student.42.fr>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/21 13:48:08 by muxammad          #+#    #+#             */
-/*   Updated: 2025/05/08 17:43:25 by codespace        ###   ########.fr       */
+/*   Updated: 2025/05/09 07:29:12 by codespace        ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,9 +33,9 @@ int	is_pipe_token(t_token *tok, char **s)
 	if (**s == '|') {
 		tok->type = TOK_PIPE;
 		(*s)++;
-		return 1;
+		return (1);
 	 }
-	 return 0;
+	 return (0);
  }
  
 int is_and_token(t_token *tok, char **s)
@@ -43,30 +43,29 @@ int is_and_token(t_token *tok, char **s)
 	if (**s == '&') {
 		tok->type = TOK_AND;
 		(*s)++;
-		return 1;
+		return (1);
 	}
-	return 0;
+	return (0);
 }
 
 void assign_token(t_token *tok, char **s)
 {
 	if (is_pipe_token(tok, s))
-		return;
+		return ;
 	if (is_and_token(tok, s))
-		return;
+		return ;
 	if (is_seq_token(tok, s))
-		return;
+		return ;
 	if (is_lt_token(tok, s))
-		return;
+		return ;
 	if (is_gt_token(tok, s))
-		return;
+		return ;
 	if (is_lparen_token(tok, s))
-		return;
+		return ;
 	if (is_rparen_token(tok, s))
-		return;
+		return ;
 	tok->type = TOK_WORD;
 }
-
 
 t_token gettoken(ParserState *ps)
 {
