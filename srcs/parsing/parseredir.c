@@ -6,7 +6,7 @@
 /*   By: codespace <codespace@student.42.fr>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/22 10:57:14 by muxammad          #+#    #+#             */
-/*   Updated: 2025/05/08 17:49:54 by codespace        ###   ########.fr       */
+/*   Updated: 2025/05/09 06:29:51 by codespace        ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,7 +38,9 @@ t_cmd *parseredirs(t_cmd *cmd, ParserState *ps)
 	t_cmd	*newcmd;
 	int		mode;
 	int		fd;
-	
+	bool	heredoc;
+
+	heredoc = false;
 	while (1)
 	{
 		op_tok = gettoken(ps);
@@ -65,12 +67,13 @@ t_cmd *parseredirs(t_cmd *cmd, ParserState *ps)
 				break;
 			case TOK_DLT:
 				mode = O_WRONLY | O_CREAT | O_APPEND;
-				fd = 0;
+				fd = 1;
+				heredoc = true;
 				break;
 			default:
 				break;
 		}
-		newcmd = redircmd(cmd, file_tok.start, file_tok.end, mode, fd);
+		newcmd = redircmd(cmd, file_tok.start, file_tok.end, mode, fd, heredoc);
 		if (!newcmd)
 			ft_exit("Error: Failed to create redirection command\n");
 		cmd = newcmd;
