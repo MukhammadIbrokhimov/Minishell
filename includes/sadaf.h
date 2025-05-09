@@ -6,7 +6,7 @@
 /*   By: codespace <codespace@student.42.fr>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/15 19:48:31 by muxammad          #+#    #+#             */
-/*   Updated: 2025/05/08 17:41:03 by codespace        ###   ########.fr       */
+/*   Updated: 2025/05/09 06:35:57 by codespace        ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,6 +26,7 @@
 # include <sys/stat.h>
 # include <dirent.h>
 # include <termios.h>
+# include <stdbool.h>
 # include "libft/libft.h"
 # ifndef PATH_MAX
 # define PATH_MAX 1024
@@ -81,6 +82,7 @@ typedef struct s_execcmd {
 
 typedef struct s_redircmd {
 	int type;
+	bool heredoc;
 	struct s_cmd *cmd;
 	char *file;
 	char *efile;
@@ -153,7 +155,7 @@ void nulterminate_back(t_backcmd *bcmd);
 
 /* Command constructors */
 t_cmd   *execcmd(void);
-t_cmd   *redircmd(t_cmd *subcmd, char *file, char *efile, int mode, int fd);
+t_cmd	*redircmd(t_cmd *subcmd, char *file, char *efile, int mode, int fd, bool heredoc);
 t_cmd   *pipecmd(t_cmd *left, t_cmd *right);
 t_cmd   *listcmd(t_cmd *left, t_cmd *right);
 t_cmd   *backcmd(t_cmd *subcmd);
