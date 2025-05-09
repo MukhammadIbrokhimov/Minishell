@@ -6,7 +6,7 @@
 /*   By: codespace <codespace@student.42.fr>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/15 19:48:31 by muxammad          #+#    #+#             */
-/*   Updated: 2025/05/08 15:37:43 by codespace        ###   ########.fr       */
+/*   Updated: 2025/05/08 17:41:03 by codespace        ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -128,7 +128,7 @@ void	free_env_list(t_env *env_list);
 void	free_shell(t_shell *shell);
 void	ft_exit(char *msg);
 /* Parsing */
-t_cmd   *parsecmd(char *buf);
+t_cmd	*parsecmd(char *buf);
 t_cmd	*parseline(ParserState *ps);
 t_cmd	*parsepipe(ParserState *ps);
 t_cmd	*parseexec(ParserState *ps);
@@ -136,7 +136,20 @@ t_cmd   *parseredirs(t_cmd *cmd, ParserState *ps);
 t_cmd	*parseblock(ParserState *ps);
 t_token	gettoken(ParserState *ps);
 t_cmd	*nulterminate(t_cmd *cmd);
-t_cmd	*set_heredoc(t_cmd *subcmd, char *file, char *efile);
+
+/* token parts */
+int		is_seq_token(t_token *tok, char **s);
+int		is_lt_token(t_token *tok, char **s);
+int		is_gt_token(t_token *tok, char **s);
+int		is_lparen_token(t_token *tok, char **s);
+int		is_rparen_token(t_token *tok, char **s);
+
+/* null termination parts */
+void nulterminate_exec(t_execcmd *ecmd);
+void nulterminate_redir(t_redircmd *rcmd);
+void nulterminate_pipe(t_pipecmd *pcmd);
+void nulterminate_list(t_listcmd *lcmd);
+void nulterminate_back(t_backcmd *bcmd);
 
 /* Command constructors */
 t_cmd   *execcmd(void);
