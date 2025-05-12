@@ -3,26 +3,34 @@
 /*                                                        :::      ::::::::   */
 /*   sadaf.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: codespace <codespace@student.42.fr>        +#+  +:+       +#+        */
+/*   By: gansari <gansari@student.42berlin.de>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/17 16:38:55 by mukibrok          #+#    #+#             */
-/*   Updated: 2025/05/09 07:26:57 by codespace        ###   ########.fr       */
+/*   Updated: 2025/05/12 15:45:19 by gansari          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/sadaf.h"
 
-void exec_command(char *buf, t_shell *shell)
-{
-	if (fork1() == 0)
-	{
-		t_cmd *cmd = parsecmd(buf);
-		runcmd(cmd, shell);
-		free_cmd(cmd);
-		exit(EXIT_SUCCESS);
-	}
-	wait(NULL);
-}
+// void execution(char *buf, t_shell *shell)
+// {
+// 	t_cmd	*cmd;
+
+// 	cmd = parsecmd(buf);
+// 	if (collect_all_heredocs(cmd, shell) < 0)
+// 	{
+// 		free_cmd(cmd);
+// 		return;
+// 	}
+// 	if (protected_fork() == 0)
+// 	{
+// 		runcmd(cmd, shell);
+// 		free_cmd(cmd);
+// 		exit(EXIT_SUCCESS);
+// 	}
+// 	wait(NULL);
+// 	free_cmd(cmd);
+// }
 
 int handle_cd(char *buf)
 {
@@ -44,7 +52,6 @@ int handle_cd(char *buf)
 	return (0);
 }
 
-
 void shell_loop(t_shell *shell)
 {
 	char *buf;
@@ -59,7 +66,7 @@ void shell_loop(t_shell *shell)
 			free(buf);
 			continue;
 		}
-		exec_command(buf, shell);
+		execution(buf, shell);
 		free(buf);
 	}
 }
