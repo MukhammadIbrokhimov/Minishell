@@ -6,7 +6,7 @@
 /*   By: mukibrok <mukibrok@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/21 16:31:17 by muxammad          #+#    #+#             */
-/*   Updated: 2025/05/13 16:29:17 by mukibrok         ###   ########.fr       */
+/*   Updated: 2025/05/13 17:58:14 by mukibrok         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,7 +50,7 @@ t_cmd	*execcmd(void)
  * Returns: New command with file connection or NULL on failure
  */
 
-t_cmd	*redircmd(t_cmd *subcmd, char *file, char *efile, int mode, int fd, bool heredoc)
+t_cmd	*redircmd(t_cmd *subcmd, t_redirinfo info)
 {
 	t_redircmd	*cmd;
 
@@ -60,14 +60,14 @@ t_cmd	*redircmd(t_cmd *subcmd, char *file, char *efile, int mode, int fd, bool h
 		fprintf(stderr, "redircmd: ft_calloc failed");
 		return (free_cmd(subcmd), NULL);
 	}
-	if (heredoc == true)
+	if (info.heredoc)
 		cmd->heredoc = true;
 	cmd->type = REDIR;
 	cmd->cmd = subcmd;
-	cmd->file = file;
-	cmd->efile = efile;
-	cmd->mode = mode;
-	cmd->fd = fd;
+	cmd->file = info.file;
+	cmd->efile = info.efile;
+	cmd->mode = info.mode;
+	cmd->fd = info.fd;
 	return ((t_cmd *)cmd);
 }
 
