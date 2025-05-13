@@ -6,7 +6,7 @@
 /*   By: mukibrok <mukibrok@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/22 10:57:14 by muxammad          #+#    #+#             */
-/*   Updated: 2025/05/13 14:30:59 by mukibrok         ###   ########.fr       */
+/*   Updated: 2025/05/13 16:39:57 by mukibrok         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -74,11 +74,11 @@ t_cmd	*parseredirs(t_cmd *cmd, ParserState *ps)
 	while (1)
 	{
 		op_tok = gettoken(ps);
-		if (op_tok.type != TOK_LT && op_tok.type != TOK_GT &&
-			op_tok.type != TOK_DGT && op_tok.type != TOK_DLT)
+		if (op_tok.type != TOK_LT && op_tok.type != TOK_GT
+			&& op_tok.type != TOK_DGT && op_tok.type != TOK_DLT)
 		{
 			ps->s = op_tok.start;
-			break;
+			break ;
 		}
 		file_tok = gettoken(ps);
 		if (file_tok.type != TOK_WORD)

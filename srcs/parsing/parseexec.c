@@ -6,7 +6,7 @@
 /*   By: mukibrok <mukibrok@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/22 16:41:05 by mukibrok          #+#    #+#             */
-/*   Updated: 2025/05/13 14:21:44 by mukibrok         ###   ########.fr       */
+/*   Updated: 2025/05/13 16:34:27 by mukibrok         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,8 +31,6 @@
  * 
  * Returns: Command structure ready for execution
  */
-
-
 
 static bool	is_stop_token(t_token tok)
 {
@@ -78,7 +76,7 @@ static t_cmd	*init_exec_cmd(ParserState *ps, t_execcmd **cmd)
  * It checks for unexpected tokens and manages argument count.
  */
 
-static int handle_token_and_redir(t_token tok, t_execcmd *cmd, int *argc, t_cmd **ret, ParserState *ps)
+static int	handle_token_and_redir(t_token tok, t_execcmd *cmd, int *argc, t_cmd **ret, ParserState *ps)
 {
 	if (tok.type != TOK_WORD)
 	{
@@ -94,7 +92,6 @@ static int handle_token_and_redir(t_token tok, t_execcmd *cmd, int *argc, t_cmd 
 	cmd->argv[*argc] = tok.start;
 	cmd->eargv[*argc] = tok.end;
 	(*argc)++;
-
 	if (tok.type != TOK_LT)
 	{
 		*ret = parseredirs(*ret, ps);
@@ -119,18 +116,19 @@ static int handle_token_and_redir(t_token tok, t_execcmd *cmd, int *argc, t_cmd 
  * including redirections and special tokens.
  */
 
-static int parse_arguments(t_execcmd *cmd, ParserState *ps, t_cmd **ret)
+static int	parse_arguments(t_execcmd *cmd, ParserState *ps, t_cmd **ret)
 {
-	t_token tok;
-	int argc = 0;
+	t_token	tok;
+	int		argc;
 
+	argc = 0;
 	while (1)
 	{
 		tok = gettoken(ps);
 		if (is_stop_token(tok))
 		{
 			ps->s = tok.start;
-			break;
+			break ;
 		}
 		if (!handle_token_and_redir(tok, cmd, &argc, ret, ps))
 			return (-1);
