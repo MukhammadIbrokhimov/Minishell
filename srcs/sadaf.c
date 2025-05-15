@@ -27,11 +27,12 @@ static int	is_only_whitespace(const char *str)
 
 int	handle_cd(char *buf)
 {
+
 	if (!buf)
 		return 0;
 
 	buf[strcspn(buf, "\n")] = 0;
-	if (ft_strncmp(buf, "cd ", 3) == 0 || ft_strcmp(buf, "cd") == 0)
+	if (strncmp(buf, "cd ", 3) == 0 || strcmp(buf, "cd") == 0)
 	{
 		char *path = buf + 2;
 		while (*path == ' ')

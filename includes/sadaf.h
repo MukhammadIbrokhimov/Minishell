@@ -195,6 +195,7 @@ int		update_or_add_env(t_shell *shell, char *name, char *value);
 int		builtin_unset(t_execcmd *ecmd, t_shell *shell);
 int		builtin_env(t_execcmd *ecmd, t_shell *shell);
 int		builtin_exit(t_execcmd *ecmd, t_shell *shell);
+char	*remove_quotes(char *str);
 
 /* Heredoc handling */
 int		handle_heredoc(char *delimiter, t_shell *shell);
