@@ -6,7 +6,7 @@
 /*   By: mukibrok <mukibrok@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/17 16:38:55 by mukibrok          #+#    #+#             */
-/*   Updated: 2025/05/15 16:43:36 by mukibrok         ###   ########.fr       */
+/*   Updated: 2025/05/15 17:34:51 by mukibrok         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,8 +31,8 @@ int	handle_cd(char *buf)
 
 	if (!buf)
 		return (0);
-	buf[strcspn(buf, "\n")] = 0;
-	if (strncmp(buf, "cd ", 3) == 0 || strcmp(buf, "cd") == 0)
+	buf[strcspn(buf, "\n")] = 0; // rebuild the function
+	if (ft_strncmp(buf, "cd ", 3) == 0 || strcmp(buf, "cd") == 0)
 	{
 		path = buf + 2;
 		while (*path == ' ')
