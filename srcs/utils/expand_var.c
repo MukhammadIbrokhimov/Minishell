@@ -6,7 +6,7 @@
 /*   By: gansari <gansari@student.42berlin.de>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/24 15:11:20 by gansari           #+#    #+#             */
-/*   Updated: 2025/04/24 15:11:21 by gansari          ###   ########.fr       */
+/*   Updated: 2025/05/15 18:09:40 by gansari          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -101,7 +101,6 @@ void	expand_variables(t_execcmd *ecmd, t_shell *shell)
 		if (dollar)
 		{
 			expanded = process_arg(ecmd->argv[i], shell);
-			free(ecmd->argv[i]);
 			ecmd->argv[i] = expanded;
 		}
 		i++;
