@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   sadaf.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mukibrok <mukibrok@student.42.fr>          +#+  +:+       +#+        */
+/*   By: gansari <gansari@student.42berlin.de>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/17 16:38:55 by mukibrok          #+#    #+#             */
-/*   Updated: 2025/05/15 18:27:07 by mukibrok         ###   ########.fr       */
+/*   Updated: 2025/05/15 23:20:31 by gansari          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,6 +56,8 @@ void	shell_loop(t_shell *shell)
 
 	while (1)
 	{
+		setup_signals(0);
+		g_signal_received = 0;
 		buf = getcmd();
 		if (!buf)
 			break ;
