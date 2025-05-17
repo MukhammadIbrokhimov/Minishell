@@ -6,7 +6,7 @@
 /*   By: mukibrok <mukibrok@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/24 14:22:03 by gansari           #+#    #+#             */
-/*   Updated: 2025/05/15 15:51:18 by mukibrok         ###   ########.fr       */
+/*   Updated: 2025/05/17 16:51:45 by mukibrok         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -80,6 +80,7 @@ static void	command_not_found(char *cmd)
  * Note: This function does not return on success - it either replaces
  * the process or exits with error status on failure.
  */
+
 static void	exec_external_command(char *path, char **argv, t_shell *shell)
 {
 	char	**env_array;
@@ -124,6 +125,7 @@ static void	exec_external_command(char *path, char **argv, t_shell *shell)
  * - Calls command_not_found() which exits
  * - Calls exec_external_command() which replaces the process or exits
  */
+
 void	execute_command(t_execcmd *ecmd, t_shell *shell)
 {
 	char	*path;
