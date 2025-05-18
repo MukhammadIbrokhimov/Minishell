@@ -3,17 +3,17 @@
 /*                                                        :::      ::::::::   */
 /*   execute_command.c                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mukibrok <mukibrok@student.42.fr>          +#+  +:+       +#+        */
+/*   By: gansari <gansari@student.42berlin.de>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/24 14:22:03 by gansari           #+#    #+#             */
-/*   Updated: 2025/05/17 16:51:45 by mukibrok         ###   ########.fr       */
+/*   Updated: 2025/05/18 20:11:05 by gansari          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../includes/sadaf.h"
 
 /**
- * handle_builtin - Executes a shell built-in command and 
+ * handle_builtin - Executes a shell built-in command and
  * exits the process
  *
  * This function handles the execution of shell built-in commands such as
@@ -25,7 +25,7 @@
  * with the appropriate status, allowing the parent process to determine
  * if the built-in command succeeded or failed.
  *
- * @param ecmd   Pointer to the exec command structure 
+ * @param ecmd   Pointer to the exec command structure
  * containing command and args
  * @param shell  Pointer to the shell structure with environment and state
  *
@@ -60,6 +60,38 @@ static void	command_not_found(char *cmd)
 	exit(127);
 }
 
+static char	**prepare_unquoted_args(char **argv, char *path)
+{
+	char	**unquoted_argv;
+	int 	i;
+
+	i = 0;
+	while (argv[i])
+		i++;
+	unquoted_argv = malloc(sizeof(char *) * (i + 1));
+	if (!unquoted_argv)
+	{
+		free(path);
+		ft_perror("malloc");
+		exit(1);
+	}
+	i = 0;
+	while (argv[i])
+	{
+		unquoted_argv[i] = remove_quotes(argv[i]);
+		if (!unquoted_argv[i])
+		{
+			cleanup_tokens(unquoted_argv);
+			free(path);
+			ft_perror("remove_quotes");
+			exit(1);
+		}
+		i++;
+	}
+	unquoted_argv[i] = NULL;
+	return (unquoted_argv);
+}
+
 /**
  * exec_external_command - Executes an external (non-built-in) command
  *
@@ -80,21 +112,24 @@ static void	command_not_found(char *cmd)
  * Note: This function does not return on success - it either replaces
  * the process or exits with error status on failure.
  */
-
 static void	exec_external_command(char *path, char **argv, t_shell *shell)
 {
 	char	**env_array;
+	char	**unquoted_argv;
 
+	unquoted_argv = prepare_unquoted_args(argv, path);
 	env_array = env_to_array(shell->env_list);
 	if (!env_array)
 	{
 		free(path);
+		cleanup_tokens(unquoted_argv);
 		ft_perror("env_to_array");
 		exit(1);
 	}
-	if (execve(path, argv, env_array) < 0)
+	if (execve(path, unquoted_argv, env_array) < 0)
 	{
 		free(path);
+		cleanup_tokens(unquoted_argv);
 		cleanup_tokens(env_array);
 		ft_perror("execve");
 		exit(1);
@@ -125,7 +160,6 @@ static void	exec_external_command(char *path, char **argv, t_shell *shell)
  * - Calls command_not_found() which exits
  * - Calls exec_external_command() which replaces the process or exits
  */
-
 void	execute_command(t_execcmd *ecmd, t_shell *shell)
 {
 	char	*path;
@@ -138,11 +172,11 @@ void	execute_command(t_execcmd *ecmd, t_shell *shell)
 	if (!ecmd->argv[0])
 		exit(0);
 	expand_variables(ecmd, shell);
-	if (is_builtin(ecmd->argv[0]))
+	if (is_builtin(remove_quotes(ecmd->argv[0])))
 		handle_builtin(ecmd, shell);
-	path = find_command_path(ecmd->argv[0], shell);
+	path = find_command_path(remove_quotes(ecmd->argv[0]), shell);
 	if (!path)
-		command_not_found(ecmd->argv[0]);
+		command_not_found(remove_quotes(ecmd->argv[0]));
 	exec_external_command(path, ecmd->argv, shell);
 	ft_error("execute_command: unreachable code");
 	exit(1);
