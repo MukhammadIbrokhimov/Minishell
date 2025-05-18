@@ -3,17 +3,17 @@
 /*                                                        :::      ::::::::   */
 /*   execute_command.c                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: gansari <gansari@student.42berlin.de>      +#+  +:+       +#+        */
+/*   By: mukibrok <mukibrok@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/24 14:22:03 by gansari           #+#    #+#             */
-/*   Updated: 2025/05/18 20:11:05 by gansari          ###   ########.fr       */
+/*   Updated: 2025/05/17 16:51:45 by mukibrok         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../includes/sadaf.h"
 
 /**
- * handle_builtin - Executes a shell built-in command and
+ * handle_builtin - Executes a shell built-in command and 
  * exits the process
  *
  * This function handles the execution of shell built-in commands such as
@@ -25,7 +25,7 @@
  * with the appropriate status, allowing the parent process to determine
  * if the built-in command succeeded or failed.
  *
- * @param ecmd   Pointer to the exec command structure
+ * @param ecmd   Pointer to the exec command structure 
  * containing command and args
  * @param shell  Pointer to the shell structure with environment and state
  *
@@ -63,7 +63,7 @@ static void	command_not_found(char *cmd)
 static char	**prepare_unquoted_args(char **argv, char *path)
 {
 	char	**unquoted_argv;
-	int 	i;
+	int		i;
 
 	i = 0;
 	while (argv[i])
@@ -163,6 +163,7 @@ static void	exec_external_command(char *path, char **argv, t_shell *shell)
 void	execute_command(t_execcmd *ecmd, t_shell *shell)
 {
 	char	*path;
+	char	*cmd_no_quotes;
 
 	if (!ecmd || !shell)
 	{
@@ -172,11 +173,21 @@ void	execute_command(t_execcmd *ecmd, t_shell *shell)
 	if (!ecmd->argv[0])
 		exit(0);
 	expand_variables(ecmd, shell);
-	if (is_builtin(remove_quotes(ecmd->argv[0])))
+	cmd_no_quotes = remove_quotes(ecmd->argv[0]);
+	if (!cmd_no_quotes)
+	{
+		ft_error("remove_quotes failed");
+		exit(1);
+	}
+	if (is_builtin(cmd_no_quotes))
+	{
+		free(cmd_no_quotes);
 		handle_builtin(ecmd, shell);
-	path = find_command_path(remove_quotes(ecmd->argv[0]), shell);
+	}
+	path = find_command_path(cmd_no_quotes, shell);
+	free(cmd_no_quotes);
 	if (!path)
-		command_not_found(remove_quotes(ecmd->argv[0]));
+		command_not_found(ecmd->argv[0]);
 	exec_external_command(path, ecmd->argv, shell);
 	ft_error("execute_command: unreachable code");
 	exit(1);
