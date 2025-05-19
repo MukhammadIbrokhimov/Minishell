@@ -6,12 +6,11 @@
 /*   By: mukibrok <mukibrok@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/19 18:15:23 by mukibrok          #+#    #+#             */
-/*   Updated: 2025/05/19 18:29:08 by mukibrok         ###   ########.fr       */
+/*   Updated: 2025/05/19 18:45:20 by mukibrok         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../includes/sadaf.h"
-#define SYMBOLS "<|&;()<>"
 
 int	is_quote(char c)
 {
