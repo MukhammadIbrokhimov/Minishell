@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   sadaf.h                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mukibrok <mukibrok@student.42.fr>          +#+  +:+       +#+        */
+/*   By: gansari <gansari@student.42berlin.de>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/15 19:48:31 by muxammad          #+#    #+#             */
-/*   Updated: 2025/05/19 18:53:52 by mukibrok         ###   ########.fr       */
+/*   Updated: 2025/05/19 20:08:11 by gansari          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -255,5 +255,6 @@ void	prepare_for_command(void);
 int		should_skip_empty_command(char *buf);
 int		handle_special_command(char *buf);
 int		if_only_token(const char *str);
+int		is_valid_identifier(char *name);
 
 #endif
