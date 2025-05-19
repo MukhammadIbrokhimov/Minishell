@@ -6,7 +6,7 @@
 /*   By: mukibrok <mukibrok@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/15 19:48:31 by muxammad          #+#    #+#             */
-/*   Updated: 2025/05/17 14:37:58 by mukibrok         ###   ########.fr       */
+/*   Updated: 2025/05/19 18:18:52 by mukibrok         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -161,6 +161,11 @@ int		is_lt_token(t_token *tok, char **s);
 int		is_gt_token(t_token *tok, char **s);
 int		is_lparen_token(t_token *tok, char **s);
 int		is_rparen_token(t_token *tok, char **s);
+int		is_quote(char c);
+char	*parse_quoted_word(char *s, char quote_char);
+int		is_pipe_token(t_token *tok, char **s);
+int		is_and_token(t_token *tok, char **s);
+void	assign_token(t_token *tok, char **s);
 
 /* null termination parts */
 void	nulterminate_exec(t_execcmd *ecmd);
