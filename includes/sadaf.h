@@ -6,7 +6,7 @@
 /*   By: mukibrok <mukibrok@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/15 19:48:31 by muxammad          #+#    #+#             */
-/*   Updated: 2025/05/19 18:18:52 by mukibrok         ###   ########.fr       */
+/*   Updated: 2025/05/19 18:53:52 by mukibrok         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,6 +40,7 @@
 # define HEREDOC 6
 
 # define MAXARGS 100
+# define SYMBOLS "<|&;()<>"
 
 extern int	g_signal_received;
 
@@ -253,5 +254,6 @@ void	execution(char *buf, t_shell *shell);
 void	prepare_for_command(void);
 int		should_skip_empty_command(char *buf);
 int		handle_special_command(char *buf);
+int		if_only_token(const char *str);
 
 #endif
