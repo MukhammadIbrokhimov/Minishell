@@ -43,7 +43,7 @@ t_token	gettoken(t_parserState *ps)
 	assign_token(&tok, &s);
 	if (tok.type == TOK_WORD)
 	{
-		while (s < ps->end && !isspace(*s) && !strchr(SYMBOLS, *s))
+		while (s < ps->end && !isspace(*s) && !ft_strchr(SYMBOLS, *s))
 		{
 			if (is_quote(*s))
 			{

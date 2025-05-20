@@ -97,7 +97,7 @@ void	expand_variables(t_execcmd *ecmd, t_shell *shell)
 	i = 0;
 	while (ecmd->argv[i])
 	{
-		dollar = strchr(ecmd->argv[i], '$');
+		dollar = ft_strchr(ecmd->argv[i], '$');
 		if (dollar)
 		{
 			expanded = process_arg(ecmd->argv[i], shell);
