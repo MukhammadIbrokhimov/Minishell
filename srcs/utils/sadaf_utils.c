@@ -6,7 +6,7 @@
 /*   By: mukibrok <mukibrok@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/17 16:38:55 by mukibrok          #+#    #+#             */
-/*   Updated: 2025/05/19 18:30:31 by mukibrok         ###   ########.fr       */
+/*   Updated: 2025/05/20 20:02:23 by mukibrok         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,7 +44,11 @@ static int	handle_cd(char *buf)
 				path = "/";
 		}
 		if (chdir(path) < 0)
-			fprintf(stderr, "cannot cd to '%s'\n", path);
+		{
+			ft_putstr_fd("\x1b[31mcannot cd to ", 2);
+			ft_putstr_fd(path, 2);
+			ft_putstr_fd("\n", 2);
+		}
 		return (1);
 	}
 	return (0);

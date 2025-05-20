@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   expand_var.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: gansari <gansari@student.42berlin.de>      +#+  +:+       +#+        */
+/*   By: mukibrok <mukibrok@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/24 15:11:20 by gansari           #+#    #+#             */
-/*   Updated: 2025/05/15 18:09:40 by gansari          ###   ########.fr       */
+/*   Updated: 2025/05/20 17:46:31 by mukibrok         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,7 @@ char	*handle_exit_status(char *expanded, t_shell *shell)
 	char	exit_str[12];
 	char	*tmp;
 
-	snprintf(exit_str, sizeof(exit_str), "%d", shell->exit_status);
+	ft_snprintf(exit_str, sizeof(exit_str), "%d", shell->exit_status);
 	tmp = expanded;
 	expanded = ft_strjoin(expanded, exit_str);
 	free(tmp);

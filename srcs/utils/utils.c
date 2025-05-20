@@ -6,7 +6,7 @@
 /*   By: mukibrok <mukibrok@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/09 07:27:25 by codespace         #+#    #+#             */
-/*   Updated: 2025/05/19 19:07:25 by mukibrok         ###   ########.fr       */
+/*   Updated: 2025/05/20 20:05:51 by mukibrok         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,8 +23,7 @@ int	if_only_token(const char *str)
 	ptr = ft_strchr(SYMBOLS, *str);
 	if (ptr)
 	{
-		fprintf(stderr, "sadaf: syntax error near unexpected token '%c'\n",
-			*ptr);
+		ft_putstr_fd("\x1b[31msadaf: syntax error near unexpected token\n", 2);
 		return (1);
 	}
 	return (0);
