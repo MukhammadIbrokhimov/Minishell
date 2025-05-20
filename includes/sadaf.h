@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   sadaf.h                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: gansari <gansari@student.42berlin.de>      +#+  +:+       +#+        */
+/*   By: mukibrok <mukibrok@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/15 19:48:31 by muxammad          #+#    #+#             */
-/*   Updated: 2025/05/19 20:08:11 by gansari          ###   ########.fr       */
+/*   Updated: 2025/05/20 16:40:42 by mukibrok         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -259,5 +259,6 @@ int		is_valid_identifier(char *name);
 char	**allocate_unquoted_array(char **argv, char *path);
 void	handle_unquote_error(char **unquoted_argv, char *path);
 void	check_cmd_args(t_execcmd *ecmd, t_shell *shell);
+int		if_contains_lparen(const char *str);
 
 #endif
