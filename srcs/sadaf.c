@@ -6,7 +6,7 @@
 /*   By: mukibrok <mukibrok@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/16 11:28:51 by gansari           #+#    #+#             */
-/*   Updated: 2025/05/19 19:00:37 by mukibrok         ###   ########.fr       */
+/*   Updated: 2025/05/20 16:18:20 by mukibrok         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,8 @@ static bool	should_skip_command(char *buf)
 {
 	return (if_only_token(buf)
 		|| should_skip_empty_command(buf)
-		|| handle_special_command(buf));
+		|| handle_special_command(buf)
+		|| if_contains_lparen(buf));
 }
 
 void	shell_loop(t_shell *shell)
@@ -27,6 +28,7 @@ void	shell_loop(t_shell *shell)
 	{
 		prepare_for_command();
 		buf = getcmd();
+		printf("sadaf> loop started\n"); // Debugging line
 		if (!buf)
 			break ;
 		if (should_skip_command(buf))
@@ -34,6 +36,7 @@ void	shell_loop(t_shell *shell)
 			free(buf);
 			continue ;
 		}
+		printf("sadaf> execution started\n"); // Debugging line
 		execution(buf, shell);
 		free(buf);
 	}
