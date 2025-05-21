@@ -12,6 +12,53 @@
 
 #include "../../includes/sadaf.h"
 
+static char	*remove_even_quotes(char *str)
+{
+	int		i;
+	int		j;
+	char	*temp;
+
+	i = 0;
+	j = 0;
+	temp = malloc(sizeof(char) * (ft_strlen(str) + 1));
+	if (!temp)
+		return (NULL);
+	while (str[i])
+	{
+		if (str[i] == '"' || str[i] == '\'')
+			i++;
+		else
+			temp[j++] = str[i++];
+	}
+	temp[j] = '\0';
+	return (temp);
+}
+
+static int	count_quotes(char *str)
+{
+	int		double_quote;
+	int		single_quote;
+	int		i;
+
+	single_quote = 0;
+	double_quote = 0;
+	i = 0;
+	while (str[i])
+	{
+		if (str[i] == '"')
+			double_quote++;
+		else if (str[i] == '\'')
+			single_quote++;
+		i++;
+	}
+	if (!(single_quote == 0 && double_quote == 0))
+	{
+		if (single_quote % 2 == 0 && double_quote % 2 == 0)
+			return (1);
+	}
+	return (0);
+}
+
 /**
  * is_valid_n_flag - Checks if a string represents a valid -n flag option
  * @str: The string to check
@@ -39,6 +86,14 @@ static int	is_valid_n_flag(char *str)
 	return (1);
 }
 
+static char	*unquoted_str(char *str)
+{
+	if (count_quotes(str))
+		return (remove_even_quotes(str));
+	else
+		return (remove_quotes(str));
+}
+
 /**
  * builtin_echo - Implements the echo builtin command
  * @ecmd: Command structure containing arguments to echo
@@ -51,7 +106,7 @@ static int	is_valid_n_flag(char *str)
  * Examples:
  *   echo hello      -> hello\n
  *   echo -n hello   -> hello
- *   echo -nnnn hi   -> hi
+ *   echo -nnnn hi   -> hi hi
  *   echo -n -nn hi  -> hi
  *
  * Return: Always 0 (success)
@@ -72,7 +127,7 @@ int	builtin_echo(t_execcmd *ecmd, t_shell *shell)
 	}
 	while (ecmd->argv[i])
 	{
-		unquoted = remove_quotes(ecmd->argv[i]);
+		unquoted = unquoted_str(ecmd->argv[i]);
 		ft_putstr_fd(unquoted, STDOUT_FILENO);
 		free(unquoted);
 		if (ecmd->argv[i + 1])
