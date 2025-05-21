@@ -23,7 +23,7 @@ int	if_only_token(const char *str)
 	ptr = ft_strchr(SYMBOLS, *str);
 	if (ptr)
 	{
-		ft_fprintf(2, "sadaf: syntax error near unexpected token '%c'\n",
+		ft_fprintf(2, "\x1b[31msadaf: syntax error near unexpected token '%c'\n",
 			*ptr);
 		return (1);
 	}
