@@ -24,6 +24,6 @@ int	fork1(void)
 
 	pid = fork();
 	if (pid < 0)
-		ft_putstr_fd("\x1b[31mProcess error\n", 2);
+		ft_fprintf(2, "\x1b[31mProcess error\n");
 	return (pid);
 }
