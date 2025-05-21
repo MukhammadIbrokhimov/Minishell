@@ -6,7 +6,7 @@
 /*   By: mukibrok <mukibrok@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/15 19:48:31 by muxammad          #+#    #+#             */
-/*   Updated: 2025/05/20 16:40:42 by mukibrok         ###   ########.fr       */
+/*   Updated: 2025/05/20 17:58:13 by mukibrok         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,6 +41,11 @@
 
 # define MAXARGS 100
 # define SYMBOLS "<|&;()<>"
+# define GREEN   "\x1b[32m"
+# define MAGENTA "\x1b[35m"
+# define CYAN    "\x1b[36m"
+# define YELLOW  "\x1b[33m"
+# define RESET   "\x1b[0m"
 
 extern int	g_signal_received;
 
