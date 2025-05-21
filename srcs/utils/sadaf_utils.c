@@ -50,9 +50,9 @@ static int	handle_cd(char *buf)
 	return (0);
 }
 
-void	prepare_for_command(void)
+void	prepare_for_command(t_shell *shell)
 {
-	setup_signals(0);
+	setup_signals(0, shell);
 	g_signal_received = 0;
 }
 

@@ -225,7 +225,7 @@ char	**parse_path(t_env *env_list);
 char	*build_path(char *dir, char *cmd);
 
 /* Signals */
-void	setup_signals(int mode);
+void	setup_signals(int mode, t_shell *shell);
 void	handle_sigint(int sig);
 void	handle_sigquit(int sig);
 
@@ -257,7 +257,7 @@ t_cmd	*nulterminate(t_cmd *cmd);
 int		setup_pipe_output(int *fd);
 int		setup_pipe_input(int *fd);
 void	execution(char *buf, t_shell *shell);
-void	prepare_for_command(void);
+void	prepare_for_command(t_shell *shell);
 int		should_skip_empty_command(char *buf);
 int		handle_special_command(char *buf);
 int		if_only_token(const char *str);
