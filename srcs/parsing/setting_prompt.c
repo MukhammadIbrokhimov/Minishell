@@ -37,7 +37,7 @@ void	print_prompt(void)
 		while (*es != '/')
 			es--;
 		es++;
-		ft_fprintf(2, "-> %s $ ", es);
+		ft_fprintf(2, "\x1b[31m-> %s $ ", es);
 	}
 }
 
