@@ -6,23 +6,33 @@
 /*   By: mukibrok <mukibrok@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/16 11:28:51 by gansari           #+#    #+#             */
-/*   Updated: 2025/05/20 18:09:14 by mukibrok         ###   ########.fr       */
+/*   Updated: 2025/05/21 16:40:39 by mukibrok         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/sadaf.h"
 
-static bool	should_skip_command(char *buf)
+static int	should_skip_command(char *buf)
 {
-	return (if_only_token(buf)
-		|| should_skip_empty_command(buf)
-		|| handle_special_command(buf)
-		|| if_contains_lparen(buf));
+	int	token_check;
+
+	if (should_skip_empty_command(buf))
+		return (1);
+	if (handle_special_command(buf))
+		return (3);
+	token_check = if_only_token(buf);
+	if (token_check)
+		return (token_check);
+	token_check = if_contains_lparen(buf);
+	if (token_check)
+		return (token_check);
+	return (0);
 }
 
 void	shell_loop(t_shell *shell)
 {
 	char	*buf;
+	int		skip_status;
 
 	while (1)
 	{
@@ -30,9 +40,14 @@ void	shell_loop(t_shell *shell)
 		buf = getcmd();
 		if (!buf)
 			break ;
-		if (should_skip_command(buf))
+		skip_status = should_skip_command(buf);
+		if (skip_status)
 		{
 			free(buf);
+			if (skip_status == 3)
+				shell->exit_status = 1;
+			if (skip_status == 2)
+				shell->exit_status = 2;
 			continue ;
 		}
 		execution(buf, shell);
