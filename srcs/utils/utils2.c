@@ -6,7 +6,7 @@
 /*   By: mukibrok <mukibrok@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/20 16:29:28 by mukibrok          #+#    #+#             */
-/*   Updated: 2025/05/21 16:23:05 by mukibrok         ###   ########.fr       */
+/*   Updated: 2025/05/22 13:26:35 by mukibrok         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,6 +20,8 @@ int	if_contains_lparen(const char *str)
 		str++;
 	while (*str)
 	{
+		if (*str == 34 || *str == 39)
+			return (0);
 		if (*str == '(')
 		{
 			ft_fprintf(2,
