@@ -32,6 +32,13 @@ char	*expand_var(char *expanded, char *arg, int *j, t_shell *shell)
 	char	*tmp;
 
 	start = *j + 1;
+	if (!arg[start] || (!ft_isalnum(arg[start]) && arg[start] != '_'))
+	{
+		tmp = expanded;
+		expanded = ft_strjoin(expanded, "$");
+		free(tmp);
+		return (expanded);
+	}
 	while (arg[*j + 1] && (ft_isalnum(arg[*j + 1]) || arg[*j + 1] == '_'))
 		(*j)++;
 	if (start <= *j)
