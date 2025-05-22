@@ -208,6 +208,10 @@ int		builtin_unset(t_execcmd *ecmd, t_shell *shell);
 int		builtin_env(t_execcmd *ecmd, t_shell *shell);
 int		builtin_exit(t_execcmd *ecmd, t_shell *shell);
 char	*remove_quotes(char *str);
+int		are_quotes_balanced(char *str);
+char	*get_continuation_input(char *initial_input);
+char	*combine_arguments(char **argv, int start_idx);
+int		is_quote_char(char c, int *quote_state);
 
 /* Heredoc handling */
 int		handle_heredoc(char *delimiter, t_shell *shell);
