@@ -12,48 +12,6 @@
 
 #include "../../includes/sadaf.h"
 
-/**
- * process_quotes - Processes a string by removing quote characters
- * 
- * This function processes the input string by removing single and double quote
- * characters while respecting quoting rules. If a character is inside quotes of
- * the opposite type, it's preserved. For example, single quotes inside double 
- * quotes are preserved, and vice versa.
- *
- * The function uses only 4 variables as required:
- * - i: Index for iterating through the input string
- * - j: Index for writing to the result string
- * - quote_state: Integer to track both quote states using bit manipulation
- * - result: The output string with quotes removed
- *
- * @param input: The input string to process
- * 
- * @return: A newly allocated string with quotes removed, or NULL if memory allocation fails
- *          The caller is responsible for freeing this memory
- */
-static char *process_quotes(char *input)
-{
-	int		i;
-	int		j;
-	int		quote_state;
-	char	*result;
-
-	i = 0;
-	j = 0;
-	quote_state = 0;
-	result = malloc(sizeof(char) * (ft_strlen(input) + 1));
-	if (!result)
-		return NULL;
-	while (input[i])
-	{
-		if (!is_quote_char(input[i], &quote_state))
-			result[j++] = input[i];
-		i++;
-	}
-	result[j] = '\0';
-	return (result);
-}
-
 static int	is_valid_n_flag(char *str)
 {
 	int	i;
@@ -72,6 +30,47 @@ static int	is_valid_n_flag(char *str)
 	return (1);
 }
 
+static int	handle_echo_args(t_execcmd *ecmd, int *n_flag, int *start_idx)
+{
+	*n_flag = 0;
+	*start_idx = 1;
+	if (!ecmd->argv[1])
+	{
+		ft_putstr_fd("\n", STDOUT_FILENO);
+		return (1);
+	}
+	if (is_valid_n_flag(ecmd->argv[1]))
+	{
+		*n_flag = 1;
+		*start_idx = 2;
+		if (!ecmd->argv[2])
+			return (1);
+	}
+	return (0);
+}
+
+static char	*prepare_echo_input(t_execcmd *ecmd, int start_idx)
+{
+	char	*combined_input;
+	char	*temp;
+
+	combined_input = combine_arguments(ecmd->argv, start_idx);
+	if (!are_quotes_balanced(combined_input))
+	{
+		temp = combined_input;
+		combined_input = get_continuation_input(combined_input);
+		free(temp);
+	}
+	return (combined_input);
+}
+
+static void	output_echo_result(char *processed_output, int n_flag)
+{
+	ft_putstr_fd(processed_output, STDOUT_FILENO);
+	if (!n_flag)
+		ft_putstr_fd("\n", STDOUT_FILENO);
+}
+
 int	builtin_echo(t_execcmd *ecmd, t_shell *shell)
 {
 	int		n_flag;
@@ -80,31 +79,11 @@ int	builtin_echo(t_execcmd *ecmd, t_shell *shell)
 	char	*processed_output;
 
 	(void)shell;
-	n_flag = 0;
-	start_idx = 1;
-	if (!ecmd->argv[1])
-	{
-		ft_putstr_fd("\n", STDOUT_FILENO);
+	if (handle_echo_args(ecmd, &n_flag, &start_idx))
 		return (0);
-	}
-	if (is_valid_n_flag(ecmd->argv[1]))
-	{
-		n_flag = 1;
-		start_idx = 2;
-		if (!ecmd->argv[2])
-			return (0);
-	}
-	combined_input = combine_arguments(ecmd->argv, start_idx);
-	if (!are_quotes_balanced(combined_input))
-	{
-		char *temp = combined_input;
-		combined_input = get_continuation_input(combined_input);
-		free(temp);
-	}
+	combined_input = prepare_echo_input(ecmd, start_idx);
 	processed_output = process_quotes(combined_input);
-	ft_putstr_fd(processed_output, STDOUT_FILENO);
-	if (!n_flag)
-		ft_putstr_fd("\n", STDOUT_FILENO);
+	output_echo_result(processed_output, n_flag);
 	free(combined_input);
 	free(processed_output);
 	return (0);

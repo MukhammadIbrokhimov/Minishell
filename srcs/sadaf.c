@@ -40,7 +40,7 @@ void	process_signal(t_shell *shell)
 
 int	handle_command(char *buf, t_shell *shell)
 {
-	int skip_status;
+	int	skip_status;
 
 	skip_status = should_skip_command(buf);
 	if (skip_status)
@@ -67,12 +67,12 @@ void	shell_loop(t_shell *shell)
 		if (!buf)
 		{
 			ft_putstr_fd("exit\n", STDOUT_FILENO);
-			break;
+			break ;
 		}
 		if (handle_command(buf, shell))
 		{
 			free(buf);
-			continue;
+			continue ;
 		}
 		free(buf);
 	}

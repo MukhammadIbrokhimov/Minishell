@@ -212,6 +212,7 @@ int		are_quotes_balanced(char *str);
 char	*get_continuation_input(char *initial_input);
 char	*combine_arguments(char **argv, int start_idx);
 int		is_quote_char(char c, int *quote_state);
+char	*process_quotes(char *input);
 
 /* Heredoc handling */
 int		handle_heredoc(char *delimiter, t_shell *shell);

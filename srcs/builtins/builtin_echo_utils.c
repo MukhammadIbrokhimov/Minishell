@@ -10,8 +10,30 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-
 #include "../../includes/sadaf.h"
+
+char	*process_quotes(char *input)
+{
+	int		i;
+	int		j;
+	int		quote_state;
+	char	*result;
+
+	i = 0;
+	j = 0;
+	quote_state = 0;
+	result = malloc(sizeof(char) * (ft_strlen(input) + 1));
+	if (!result)
+		return (NULL);
+	while (input[i])
+	{
+		if (!is_quote_char(input[i], &quote_state))
+			result[j++] = input[i];
+		i++;
+	}
+	result[j] = '\0';
+	return (result);
+}
 
 int	are_quotes_balanced(char *str)
 {
@@ -44,7 +66,7 @@ char	*get_continuation_input(char *initial_input)
 	{
 		line = readline("> ");
 		if (!line)
-			break;
+			break ;
 		temp = result;
 		result = ft_strjoin(result, "\n");
 		free(temp);
@@ -53,7 +75,7 @@ char	*get_continuation_input(char *initial_input)
 		free(temp);
 		free(line);
 		if (are_quotes_balanced(result))
-			break;
+			break ;
 	}
 	return (result);
 }
@@ -82,20 +104,6 @@ char	*combine_arguments(char **argv, int start_idx)
 	return (combined);
 }
 
-/**
- * is_quote_char - Handles the quote character logic
- * 
- * This function determines if the current character is a quote character and
- * updates the quote state accordingly. It uses bit manipulation to track both
- * single and double quote states within a single integer:
- * - Bit 0 (LSB): single quote state (0 = not in single quote, 1 = in single quote)
- * - Bit 1: double quote state (0 = not in double quote, 1 = in double quote)
- *
- * @param c: The current character being processed
- * @param quote_state: Pointer to the integer tracking both quote states
- * 
- * @return: 1 if the character is a quote that should be processed, 0 otherwise
- */
 int	is_quote_char(char c, int *quote_state)
 {
 	int	in_single_quote;
