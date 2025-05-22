@@ -12,62 +12,151 @@
 
 #include "../../includes/sadaf.h"
 
-static char	*remove_even_quotes(char *str)
+static int	are_quotes_balanced(char *str)
 {
-	int		i;
-	int		j;
-	char	*temp;
+	int	i;
+	int	in_single_quote;
+	int	in_double_quote;
 
 	i = 0;
-	j = 0;
-	temp = malloc(sizeof(char) * (ft_strlen(str) + 1));
-	if (!temp)
-		return (NULL);
+	in_single_quote = 0;
+	in_double_quote = 0;
 	while (str[i])
 	{
-		if (str[i] == '"' || str[i] == '\'')
-			i++;
-		else
-			temp[j++] = str[i++];
-	}
-	temp[j] = '\0';
-	return (temp);
-}
-
-static int	count_quotes(char *str)
-{
-	int		double_quote;
-	int		single_quote;
-	int		i;
-
-	single_quote = 0;
-	double_quote = 0;
-	i = 0;
-	while (str[i])
-	{
-		if (str[i] == '"')
-			double_quote++;
-		else if (str[i] == '\'')
-			single_quote++;
+		if (str[i] == '\'' && !in_double_quote)
+			in_single_quote = !in_single_quote;
+		else if (str[i] == '"' && !in_single_quote)
+			in_double_quote = !in_double_quote;
 		i++;
 	}
-	if (!(single_quote == 0 && double_quote == 0))
+	return (!in_single_quote && !in_double_quote);
+}
+
+static char	*get_continuation_input(char *initial_input)
+{
+	char	*line;
+	char	*result;
+	char	*temp;
+
+	result = ft_strdup(initial_input);
+	while (1)
 	{
-		if (single_quote % 2 == 0 && double_quote % 2 == 0)
-			return (1);
+		line = readline("> ");
+		if (!line)
+			break;
+		temp = result;
+		result = ft_strjoin(result, "\n");
+		free(temp);
+		temp = result;
+		result = ft_strjoin(result, line);
+		free(temp);
+		free(line);
+		if (are_quotes_balanced(result))
+			break;
+	}
+	return (result);
+}
+
+static char	*combine_arguments(char **argv, int start_idx)
+{
+	int		i;
+	char	*combined;
+	char	*temp;
+
+	i = start_idx;
+	combined = ft_strdup("");
+	while (argv[i])
+	{
+		if (i > start_idx)
+		{
+			temp = combined;
+			combined = ft_strjoin(combined, " ");
+			free(temp);
+		}
+		temp = combined;
+		combined = ft_strjoin(combined, argv[i]);
+		free(temp);
+		i++;
+	}
+	return (combined);
+}
+
+/**
+ * is_quote_char - Handles the quote character logic
+ * 
+ * This function determines if the current character is a quote character and
+ * updates the quote state accordingly. It uses bit manipulation to track both
+ * single and double quote states within a single integer:
+ * - Bit 0 (LSB): single quote state (0 = not in single quote, 1 = in single quote)
+ * - Bit 1: double quote state (0 = not in double quote, 1 = in double quote)
+ *
+ * @param c: The current character being processed
+ * @param quote_state: Pointer to the integer tracking both quote states
+ * 
+ * @return: 1 if the character is a quote that should be processed, 0 otherwise
+ */
+static int	is_quote_char(char c, int *quote_state)
+{
+	int	in_single_quote;
+	int	in_double_quote;
+
+	in_single_quote = *quote_state & 1;
+	in_double_quote = (*quote_state >> 1) & 1;
+	if (c == '\'' && !in_double_quote)
+	{
+		*quote_state ^= 1;
+		return (1);
+	}
+	else if (c == '"' && !in_single_quote)
+	{
+		*quote_state ^= 2;
+		return (1);
 	}
 	return (0);
 }
 
 /**
- * is_valid_n_flag - Checks if a string represents a valid -n flag option
- * @str: The string to check
+ * process_quotes - Processes a string by removing quote characters
+ * 
+ * This function processes the input string by removing single and double quote
+ * characters while respecting quoting rules. If a character is inside quotes of
+ * the opposite type, it's preserved. For example, single quotes inside double 
+ * quotes are preserved, and vice versa.
  *
- * This function validates whether a string is a valid -n option for echo.
- * Valid options include "-n", "-nn", "-nnn", etc. (one or more 'n' after '-')
+ * The function uses only 4 variables as required:
+ * - i: Index for iterating through the input string
+ * - j: Index for writing to the result string
+ * - quote_state: Integer to track both quote states using bit manipulation
+ * - result: The output string with quotes removed
  *
- * Return: 1 if valid -n flag, 0 otherwise
+ * @param input: The input string to process
+ * 
+ * @return: A newly allocated string with quotes removed, or NULL if memory allocation fails
+ *          The caller is responsible for freeing this memory
  */
+static char *process_quotes(char *input)
+{
+	int		i;
+	int		j;
+	int		quote_state;
+	char	*result;
+
+	i = 0;
+	j = 0;
+	quote_state = 0;
+	result = malloc(sizeof(char) * (ft_strlen(input) + 1));
+	if (!result)
+		return NULL;
+	while (input[i])
+	{
+		if (!is_quote_char(input[i], &quote_state))
+			result[j++] = input[i];
+		i++;
+	}
+	result[j] = '\0';
+	return (result);
+}
+
 static int	is_valid_n_flag(char *str)
 {
 	int	i;
@@ -86,55 +175,40 @@ static int	is_valid_n_flag(char *str)
 	return (1);
 }
 
-static char	*unquoted_str(char *str)
-{
-	if (count_quotes(str))
-		return (remove_even_quotes(str));
-	else
-		return (remove_quotes(str));
-}
-
-/**
- * builtin_echo - Implements the echo builtin command
- * @ecmd: Command structure containing arguments to echo
- * @shell: Shell state structure (unused in this function)
- *
- * This function implements echo with support for the -n option.
- * It supports multiple -n flags (e.g., -nnnn) which all have the same effect
- * as a single -n flag. The -n flag suppresses the trailing newline.
- *
- * Examples:
- *   echo hello      -> hello\n
- *   echo -n hello   -> hello
- *   echo -nnnn hi   -> hi hi
- *   echo -n -nn hi  -> hi
- *
- * Return: Always 0 (success)
- */
 int	builtin_echo(t_execcmd *ecmd, t_shell *shell)
 {
-	int		i;
 	int		n_flag;
-	char	*unquoted;
+	int		start_idx;
+	char	*combined_input;
+	char	*processed_output;
 
 	(void)shell;
 	n_flag = 0;
-	i = 1;
-	while (ecmd->argv[i] && is_valid_n_flag(ecmd->argv[i]))
+	start_idx = 1;
+	if (!ecmd->argv[1])
+	{
+		ft_putstr_fd("\n", STDOUT_FILENO);
+		return (0);
+	}
+	if (is_valid_n_flag(ecmd->argv[1]))
 	{
 		n_flag = 1;
-		i++;
+		start_idx = 2;
+		if (!ecmd->argv[2])
+			return (0);
 	}
-	while (ecmd->argv[i])
+	combined_input = combine_arguments(ecmd->argv, start_idx);
+	if (!are_quotes_balanced(combined_input))
 	{
-		unquoted = unquoted_str(ecmd->argv[i]);
-		ft_putstr_fd(unquoted, STDOUT_FILENO);
-		free(unquoted);
-		if (ecmd->argv[i + 1])
-			ft_putstr_fd(" ", STDOUT_FILENO);
-		i++;
+		char *temp = combined_input;
+		combined_input = get_continuation_input(combined_input);
+		free(temp);
 	}
+	processed_output = process_quotes(combined_input);
+	ft_putstr_fd(processed_output, STDOUT_FILENO);
 	if (!n_flag)
 		ft_putstr_fd("\n", STDOUT_FILENO);
+	free(combined_input);
+	free(processed_output);
 	return (0);
 }
