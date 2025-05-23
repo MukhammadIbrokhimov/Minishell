@@ -3,14 +3,17 @@
 /*                                                        :::      ::::::::   */
 /*   expand_var.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mukibrok <mukibrok@student.42.fr>          +#+  +:+       +#+        */
+/*   By: gansari <gansari@student.42berlin.de>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/24 15:11:20 by gansari           #+#    #+#             */
-/*   Updated: 2025/05/20 17:46:31 by mukibrok         ###   ########.fr       */
+/*   Updated: 2025/05/22 20:15:29 by gansari          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../includes/sadaf.h"
+int	is_inside_single_quotes(char *arg, int pos);
+int	is_inside_double_quotes(char *arg, int pos);
+int	is_inside_single_quotes_up_to(char *arg, int pos);
 
 char	*handle_exit_status(char *expanded, t_shell *shell)
 {
@@ -69,6 +72,54 @@ char	*append_char(char *expanded, char c)
 	return (expanded);
 }
 
+int	is_inside_single_quotes(char *arg, int pos)
+{
+	int		i;
+	int		in_single_quotes;
+
+	i = 0;
+	in_single_quotes = 0;
+	while (i < pos)
+	{
+		if (arg[i] == '\'' && !is_inside_double_quotes(arg, i))
+			in_single_quotes = !in_single_quotes;
+		i++;
+	}
+	return (in_single_quotes);
+}
+
+int	is_inside_double_quotes(char *arg, int pos)
+{
+	int		i;
+	int		in_double_quotes;
+
+	i = 0;
+	in_double_quotes = 0;
+	while (i < pos)
+	{
+		if (arg[i] == '"' && !is_inside_single_quotes_up_to(arg, i))
+			in_double_quotes = !in_double_quotes;
+		i++;
+	}
+	return (in_double_quotes);
+}
+
+int	is_inside_single_quotes_up_to(char *arg, int pos)
+{
+	int		i;
+	int		in_single_quotes;
+
+	i = 0;
+	in_single_quotes = 0;
+	while (i < pos)
+	{
+		if (arg[i] == '\'')
+			in_single_quotes = !in_single_quotes;
+		i++;
+	}
+	return (in_single_quotes);
+}
+
 char	*process_arg(char *arg, t_shell *shell)
 {
 	int		j;
@@ -78,7 +129,7 @@ char	*process_arg(char *arg, t_shell *shell)
 	j = 0;
 	while (arg[j])
 	{
-		if (arg[j] == '$')
+		if (arg[j] == '$' && !is_inside_single_quotes(arg, j))
 		{
 			if (arg[j + 1] == '?')
 			{
