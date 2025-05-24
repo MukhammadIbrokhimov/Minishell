@@ -29,16 +29,31 @@ static int	validate_exit_arg(char *arg)
 {
 	int	i;
 
+	if (!arg || !arg[0])
+	{
+		ft_putstr_fd("sadaf: exit: : numeric argument required\n", STDERR_FILENO);
+		return (2);
+	}
 	i = 0;
+	if (arg[i] == '+' || arg[i] == '-')
+		i++;
+	if (!arg[i])
+	{
+		ft_putstr_fd("sadaf: exit: ", STDERR_FILENO);
+		ft_putstr_fd(arg, STDERR_FILENO);
+		ft_putstr_fd(": numeric argument required\n", STDERR_FILENO);
+		return (2);
+	}
 	while (arg[i])
 	{
-		if (!ft_isdigit(arg[i++]))
+		if (!ft_isdigit(arg[i]))
 		{
 			ft_putstr_fd("sadaf: exit: ", STDERR_FILENO);
 			ft_putstr_fd(arg, STDERR_FILENO);
 			ft_putstr_fd(": numeric argument required\n", STDERR_FILENO);
 			return (2);
 		}
+		i++;
 	}
 	return (-1);
 }
@@ -59,14 +74,49 @@ static int	validate_exit_arg(char *arg)
  * @param ecmd The command structure containing arguments
  * @return Exit code to use or error code
  */
+
+static char	*remove_all_quotes(char *str)
+{
+	char	*result;
+	int		i;
+	int		j;
+	int		len;
+
+	if (!str)
+		return (NULL);
+	len = ft_strlen(str);
+	result = malloc(len + 1);
+	if (!result)
+		return (NULL);
+	i = 0;
+	j = 0;
+	while (str[i])
+	{
+		if (str[i] != '"' && str[i] != '\'')
+			result[j++] = str[i];
+		i++;
+	}
+	result[j] = '\0';
+	return (result);
+}
+
 static int	handle_exit_args(t_execcmd *ecmd)
 {
-	int	exit_code;
+	int		exit_code;
+	char	*clean_arg;
 
-	exit_code = validate_exit_arg(ecmd->argv[1]);
+	clean_arg = remove_all_quotes(ecmd->argv[1]);
+	if (!clean_arg)
+		return (-2);
+	exit_code = validate_exit_arg(clean_arg);
 	if (exit_code != -1)
+	{
+		free(clean_arg);
 		return (exit_code);
-	exit_code = ft_atoi(ecmd->argv[1]);
+	}
+	exit_code = ft_atoi(clean_arg);
+	free(clean_arg);
+	
 	if (ecmd->argv[2])
 	{
 		ft_putstr_fd("sadaf: exit: too many arguments\n", STDERR_FILENO);
