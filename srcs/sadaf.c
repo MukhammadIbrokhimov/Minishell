@@ -18,8 +18,11 @@ static int	should_skip_command(char *buf)
 
 	if (should_skip_empty_command(buf))
 		return (1);
-	if (handle_special_command(buf))
+	token_check = handle_special_command(buf);
+	if (token_check == 1)
 		return (3);
+	else if (token_check == 2)
+		return (4);
 	token_check = if_only_token(buf);
 	if (token_check)
 		return (token_check);
@@ -49,6 +52,8 @@ int	handle_command(char *buf, t_shell *shell)
 			shell->exit_status = 1;
 		else if (skip_status == 2)
 			shell->exit_status = 2;
+		else if (skip_status == 4)
+			shell->exit_status = 0;
 		return (1);
 	}
 	execution(buf, shell);

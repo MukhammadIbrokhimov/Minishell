@@ -65,8 +65,11 @@ static int handle_cd(char *buf)
 		}
 		
 		if (chdir(path) < 0)
+		{
 			ft_fprintf(2, "\x1b[31mcannot cd to '%s'\n", path);
-		return (1);
+			return (1);
+		}
+		return (2);
 	}
 	return (0);
 }
