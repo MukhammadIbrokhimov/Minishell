@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   collect_heredoc_utils.c                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mukibrok <mukibrok@student.42.fr>          +#+  +:+       +#+        */
+/*   By: gansari <gansari@student.42berlin.de>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/12 12:28:13 by gansari           #+#    #+#             */
-/*   Updated: 2025/05/15 15:50:08 by mukibrok         ###   ########.fr       */
+/*   Updated: 2025/05/26 17:27:59 by gansari          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,8 +17,11 @@ int	process_heredoc_in_redircmd(t_redircmd *rcmd, t_shell *shell)
 	int		heredoc_fd;
 	char	*delimiter;
 
+	// CRITICAL FIX: Only process actual heredocs (<<), skip other redirections
+	// This prevents early validation of regular redirections during parsing
 	if (!rcmd->heredoc)
-		return (0);
+		return (0);  // Success - not a heredoc, skip it
+	
 	delimiter = ft_substr(rcmd->file, 0, rcmd->efile - rcmd->file);
 	if (!delimiter)
 		return (-1);
