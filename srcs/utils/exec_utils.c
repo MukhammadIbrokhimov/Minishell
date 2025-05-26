@@ -6,7 +6,7 @@
 /*   By: gansari <gansari@student.42berlin.de>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/12 15:35:27 by gansari           #+#    #+#             */
-/*   Updated: 2025/05/26 15:17:01 by gansari          ###   ########.fr       */
+/*   Updated: 2025/05/26 19:14:47 by gansari          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -108,15 +108,14 @@ static void	execute_forked(t_cmd *cmd, t_shell *shell)
 //         printf("UNKNOWN TYPE: %d\n", cmd->type);
 //     }
 // }
-
+// printf("=== PARSED COMMAND ===\n");
+// debug_print_cmd(cmd, 0);
+// printf("===================\n");
 void	execution(char *buf, t_shell *shell)
 {
 	t_cmd	*cmd;
 
 	cmd = parsecmd(buf);
-	// printf("=== PARSED COMMAND ===\n");
-	// debug_print_cmd(cmd, 0);
-	// printf("===================\n");
 	if (collect_all_heredocs(cmd, shell) < 0)
 	{
 		free_cmd(cmd);

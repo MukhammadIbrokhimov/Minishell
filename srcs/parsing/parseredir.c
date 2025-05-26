@@ -6,7 +6,7 @@
 /*   By: gansari <gansari@student.42berlin.de>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/22 10:57:14 by muxammad          #+#    #+#             */
-/*   Updated: 2025/05/26 17:51:19 by gansari          ###   ########.fr       */
+/*   Updated: 2025/05/26 19:29:07 by gansari          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -84,8 +84,6 @@ static int should_override_redirection(int new_fd, t_cmd *existing_cmd)
 		return (0);
 	
 	rcmd = (t_redircmd *)existing_cmd;
-	
-	// If both are input redirections (fd 0), the rightmost one should override
 	return (new_fd == 0 && rcmd->fd == 0);
 }
 
@@ -106,13 +104,7 @@ static t_cmd *override_input_redirection(t_cmd *cmd, t_cmd *new_redir)
 		return (new_redir);
 	
 	new_rcmd = (t_redircmd *)new_redir;
-	
-	// CRITICAL FIX: Instead of discarding the old redirection,
-	// we preserve it in the chain for validation while making the new one active
-	
-	// Keep the old redirection in the chain but mark it as overridden
-	new_rcmd->cmd = cmd;  // This preserves the old redirection in the chain
-	
+	new_rcmd->cmd = cmd;
 	return (new_redir);
 }
 
@@ -123,16 +115,14 @@ static t_cmd *override_input_redirection(t_cmd *cmd, t_cmd *new_redir)
  *
  * Returns: Command structure with redirections attached
  *
- * FIXED: Restore override logic for execution while preserving all redirections for validation
  */
 t_cmd	*parseredirs(t_cmd *cmd, t_parserState *ps)
 {
 	t_token	op_tok;
 	t_token	file_tok;
-	bool	heredoc;
+	bool	heredoc = false;
 	t_cmd	*new_redir;
 
-	heredoc = false;
 	while (1)
 	{
 		op_tok = gettoken(ps);
@@ -145,13 +135,9 @@ t_cmd	*parseredirs(t_cmd *cmd, t_parserState *ps)
 		file_tok = gettoken(ps);
 		if (file_tok.type != TOK_WORD)
 			ft_exit("\x1b[31mSyntax error: Expected filename after redirection\n");
-		
 		new_redir = create_redirection(cmd, op_tok, file_tok, &heredoc);
 		if (!new_redir)
 			ft_exit("Error: Failed to create redirection command\n");
-		
-		// RESTORED: Override logic for execution behavior
-		// But now override_input_redirection preserves old redirections for validation
 		if (should_override_redirection(((t_redircmd *)new_redir)->fd, cmd))
 			cmd = override_input_redirection(cmd, new_redir);
 		else

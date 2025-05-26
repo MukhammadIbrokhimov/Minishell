@@ -6,7 +6,7 @@
 /*   By: gansari <gansari@student.42berlin.de>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/24 14:23:16 by gansari           #+#    #+#             */
-/*   Updated: 2025/05/26 17:49:32 by gansari          ###   ########.fr       */
+/*   Updated: 2025/05/26 19:50:55 by gansari          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,14 +53,12 @@ static int	setup_file_redirection(int fd, int target_fd, char *file)
 		print_error(file);
 		return (-1);
 	}
-	
 	if (dup2(fd, target_fd) == -1)
 	{
 		ft_perror("sadaf: dup2");
 		close(fd);
 		return (-1);
 	}
-	
 	close(fd);
 	return (0);
 }
@@ -82,9 +80,7 @@ static int collect_all_redirections(t_redircmd *rcmd, t_redircmd **redirections,
 	int i = 0;
 	
 	current = (t_cmd *)rcmd;
-	
-	// Walk through the redirection chain and collect ALL redirections
-	while (current && i < 10) // max 10 redirections
+	while (current && i < 10)
 	{
 		if (current->type == REDIR)
 		{
@@ -92,12 +88,8 @@ static int collect_all_redirections(t_redircmd *rcmd, t_redircmd **redirections,
 			current = ((t_redircmd *)current)->cmd;
 		}
 		else
-		{
-			// Reached the actual command, stop collecting
-			break;
-		}
+			break ;
 	}
-	
 	*count = i;
 	return (0);
 }
@@ -108,43 +100,48 @@ static int collect_all_redirections(t_redircmd *rcmd, t_redircmd **redirections,
  * 
  * Returns: 0 if valid, -1 if invalid
  */
-static int validate_single_redirection(t_redircmd *redir)
+static char *extract_filename(t_redircmd *redir)
 {
 	char *filename;
 	char *clean_filename;
-	int fd;
 	
-	// Skip heredocs and fd-based redirections
 	if (!redir->file)
-		return (0);
-	
+		return (NULL);
 	filename = ft_substr(redir->file, 0, redir->efile - redir->file);
 	if (!filename)
-		return (-1);
-		
+		return (NULL);
 	clean_filename = remove_quotes(filename);
-	if (!clean_filename)
-	{
-		free(filename);
-		return (-1);
-	}
+	free(filename);
+	return (clean_filename);
+}
+
+static int open_file_with_mode(char *clean_filename, int mode)
+{
+	int fd;
 	
-	// Test if file can be opened
-	if (redir->mode & O_RDONLY)
-		fd = open(clean_filename, redir->mode);
+	if (mode & O_RDONLY)
+		fd = open(clean_filename, mode);
 	else
-		fd = open(clean_filename, redir->mode, 0644);
-		
+		fd = open(clean_filename, mode, 0644);
+	return (fd);
+}
+
+static int validate_single_redirection(t_redircmd *redir)
+{
+	char *clean_filename;
+	int fd;
+	
+	clean_filename = extract_filename(redir);
+	if (!clean_filename)
+		return (-1);
+	fd = open_file_with_mode(clean_filename, redir->mode);
 	if (fd < 0)
 	{
 		print_error(clean_filename);
-		free(filename);
 		free(clean_filename);
 		return (-1);
 	}
-	
 	close(fd);
-	free(filename);
 	free(clean_filename);
 	return (0);
 }
@@ -162,15 +159,14 @@ static int validate_single_redirection(t_redircmd *redir)
 static int validate_redirections_left_to_right(t_redircmd **redirections, int count)
 {
 	int i;
-	
-	// CRITICAL: Process from last to first (which gives us left to right in original command)
-	// This validates ALL redirections including ones that will be overridden
-	for (i = count - 1; i >= 0; i--)
+
+	i = count - 1;
+	while (i >= 0)
 	{
 		if (validate_single_redirection(redirections[i]) < 0)
 			return (-1);
+		i--;
 	}
-	
 	return (0);
 }
 
@@ -185,7 +181,7 @@ static int validate_redirections_left_to_right(t_redircmd **redirections, int co
  */
 static int validate_all_redirections(t_redircmd *rcmd)
 {
-	t_redircmd *redirections[10]; // max 10 redirections
+	t_redircmd *redirections[10];
 	int count;
 	
 	if (collect_all_redirections(rcmd, redirections, &count) < 0)
@@ -201,34 +197,47 @@ static int validate_all_redirections(t_redircmd *rcmd)
  * - Input redirection (<): Opens file and redirects to stdin
  * - Output redirection (>, >>): Opens file and redirects to stdout
  */
+static int	extract_and_clean_filename(t_redircmd *rcmd, char **filename, char **clean_filename)
+{
+	*filename = ft_substr(rcmd->file, 0, rcmd->efile - rcmd->file);
+	if (!*filename)
+	{
+		ft_putstr_fd("\x1b[31msadaf: memory allocation error\n", STDERR_FILENO);
+		return (-1);
+	}
+	*clean_filename = remove_quotes(*filename);
+	if (!*clean_filename)
+	{
+		free(*filename);
+		ft_putstr_fd("\x1b[31msadaf: memory allocation error\n", STDERR_FILENO);
+		return (-1);
+	}
+	return (0);
+}
+
+static void	cleanup_filenames(char *filename, char *clean_filename)
+{
+	free(filename);
+	free(clean_filename);
+}
+
 static int	handle_file_redirection(t_redircmd *rcmd)
 {
 	int		fd;
 	char	*filename;
 	char	*clean_filename;
+	int		result;
 
-	filename = ft_substr(rcmd->file, 0, rcmd->efile - rcmd->file);
-	if (!filename)
-	{
-		ft_putstr_fd("\x1b[31msadaf: memory allocation error\n", STDERR_FILENO);
+	if (extract_and_clean_filename(rcmd, &filename, &clean_filename) < 0)
 		return (-1);
-	}
-	clean_filename = remove_quotes(filename);
-	if (!clean_filename)
-	{
-		free(filename);
-		ft_putstr_fd("\x1b[31msadaf: memory allocation error\n", STDERR_FILENO);
-		return (-1);
-	}
 	fd = open_file(clean_filename, rcmd->mode);
-	if (setup_file_redirection(fd, rcmd->fd, clean_filename) < 0)
+	result = setup_file_redirection(fd, rcmd->fd, clean_filename);
+	if (result < 0)
 	{
-		free(filename);
-		free(clean_filename);
+		cleanup_filenames(filename, clean_filename);
 		return (-1);
 	}
-	free(filename);
-	free(clean_filename);
+	cleanup_filenames(filename, clean_filename);
 	return (0);
 }
 
@@ -259,12 +268,8 @@ void	handle_redirections(t_redircmd *rcmd, t_shell *shell)
 	int result;
 	t_cmd *actual_cmd;
 
-	// STEP 1: Validate all redirections in the chain
 	if (validate_all_redirections(rcmd) < 0)
 		exit(1);
-
-	// STEP 2: Apply ONLY the outermost redirection (rightmost in original command)
-	// This is the redirection that should actually take effect
 	if (rcmd->file)
 		result = handle_file_redirection(rcmd);
 	else
@@ -272,9 +277,6 @@ void	handle_redirections(t_redircmd *rcmd, t_shell *shell)
 		
 	if (result < 0)
 		exit(1);
-		
-	// STEP 3: Continue with the command after skipping ALL redirection layers
-	// We need to find the actual command at the end of the redirection chain
 	actual_cmd = (t_cmd *)rcmd;
 	while (actual_cmd && actual_cmd->type == REDIR)
 		actual_cmd = ((t_redircmd *)actual_cmd)->cmd;
