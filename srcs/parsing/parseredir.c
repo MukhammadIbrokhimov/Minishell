@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parseredir.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mukibrok <mukibrok@student.42.fr>          +#+  +:+       +#+        */
+/*   By: gansari <gansari@student.42berlin.de>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/22 10:57:14 by muxammad          #+#    #+#             */
-/*   Updated: 2025/05/15 17:35:50 by mukibrok         ###   ########.fr       */
+/*   Updated: 2025/05/26 10:58:42 by gansari          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -81,6 +81,61 @@ t_cmd	*create_redirection(
 }
 
 /**
+ * should_override_redirection - Check if new redirection should override existing ones
+ * @new_fd: File descriptor of the new redirection
+ * @existing_cmd: Existing command to check
+ *
+ * Returns: 1 if should override, 0 otherwise
+ *
+ * For input redirections (fd 0), the last one should take precedence.
+ * This function checks if we need to override an existing input redirection.
+ */
+static int should_override_redirection(int new_fd, t_cmd *existing_cmd)
+{
+	t_redircmd *rcmd;
+	
+	if (!existing_cmd || existing_cmd->type != REDIR)
+		return (0);
+	
+	rcmd = (t_redircmd *)existing_cmd;
+	
+	// If both are input redirections (fd 0), the new one should override
+	return (new_fd == 0 && rcmd->fd == 0);
+}
+
+/**
+ * override_input_redirection - Override existing input redirection with new one
+ * @cmd: Command structure with existing redirection
+ * @new_redir: New redirection command to use instead
+ *
+ * Returns: Modified command structure
+ *
+ * This function replaces an existing input redirection with a new one,
+ * implementing bash's behavior where the last input redirection takes precedence.
+ */
+static t_cmd *override_input_redirection(t_cmd *cmd, t_cmd *new_redir)
+{
+	t_redircmd *old_rcmd;
+	t_redircmd *new_rcmd;
+	
+	if (!cmd || cmd->type != REDIR || !new_redir || new_redir->type != REDIR)
+		return (new_redir);
+	
+	old_rcmd = (t_redircmd *)cmd;
+	new_rcmd = (t_redircmd *)new_redir;
+	
+	// Replace the old redirection's inner command with the new redirection's inner command
+	// This preserves the command hierarchy while using the new redirection
+	new_rcmd->cmd = old_rcmd->cmd;
+	
+	// Free the old redirection structure (but not its inner command, which we just moved)
+	old_rcmd->cmd = NULL; // Prevent double-free
+	free_cmd(cmd);
+	
+	return (new_redir);
+}
+
+/**
  * parseredirs - Parses redirections in command line
  * @cmd: Command structure to fill
  * @ps: Parser state to track position
@@ -90,6 +145,7 @@ t_cmd	*create_redirection(
  * This function handles the parsing of file redirections in a command line.
  * It processes operators (<, >, >>, <<) and associates them with filenames.
  * It creates new redirection commands and links them to the original command.
+ * For multiple input redirections, the last one takes precedence (bash behavior).
  */
 
 t_cmd	*parseredirs(t_cmd *cmd, t_parserState *ps)
@@ -97,6 +153,7 @@ t_cmd	*parseredirs(t_cmd *cmd, t_parserState *ps)
 	t_token	op_tok;
 	t_token	file_tok;
 	bool	heredoc;
+	t_cmd	*new_redir;
 
 	heredoc = false;
 	while (1)
@@ -111,9 +168,16 @@ t_cmd	*parseredirs(t_cmd *cmd, t_parserState *ps)
 		file_tok = gettoken(ps);
 		if (file_tok.type != TOK_WORD)
 			ft_exit("Syntax error: Expected filename after redirection\n");
-		cmd = create_redirection(cmd, op_tok, file_tok, &heredoc);
-		if (!cmd)
+		
+		new_redir = create_redirection(cmd, op_tok, file_tok, &heredoc);
+		if (!new_redir)
 			ft_exit("Error: Failed to create redirection command\n");
+		
+		// For input redirections, check if we need to override existing ones
+		if (should_override_redirection(((t_redircmd *)new_redir)->fd, cmd))
+			cmd = override_input_redirection(cmd, new_redir);
+		else
+			cmd = new_redir;
 	}
 	return (cmd);
 }
