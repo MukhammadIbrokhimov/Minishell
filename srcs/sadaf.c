@@ -6,7 +6,7 @@
 /*   By: gansari <gansari@student.42berlin.de>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/16 11:28:51 by gansari           #+#    #+#             */
-/*   Updated: 2025/05/22 23:44:34 by gansari          ###   ########.fr       */
+/*   Updated: 2025/05/26 11:34:13 by gansari          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,9 +16,9 @@ static int	should_skip_command(char *buf)
 {
 	int	token_check;
 
+	token_check = 0;
 	if (should_skip_empty_command(buf))
 		return (1);
-	token_check = handle_special_command(buf);
 	if (token_check == 1)
 		return (3);
 	else if (token_check == 2)

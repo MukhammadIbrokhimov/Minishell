@@ -6,7 +6,7 @@
 /*   By: gansari <gansari@student.42berlin.de>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/24 15:11:20 by gansari           #+#    #+#             */
-/*   Updated: 2025/05/22 20:15:29 by gansari          ###   ########.fr       */
+/*   Updated: 2025/05/26 19:19:36 by gansari          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,35 +27,50 @@ char	*handle_exit_status(char *expanded, t_shell *shell)
 	return (expanded);
 }
 
-char	*expand_var(char *expanded, char *arg, int *j, t_shell *shell)
+static char	*handle_invalid_var(char *expanded)
 {
-	int		start;
+	char	*tmp;
+
+	tmp = expanded;
+	expanded = ft_strjoin(expanded, "$");
+	free(tmp);
+	return (expanded);
+}
+
+static char	*extract_and_expand(char *expanded, char *arg, int start, int end, t_shell *shell)
+{
 	char	*var;
 	char	*value;
 	char	*tmp;
 
-	start = *j + 1;
-	if (!arg[start] || (!ft_isalnum(arg[start]) && arg[start] != '_'))
-	{
-		tmp = expanded;
-		expanded = ft_strjoin(expanded, "$");
-		free(tmp);
-		return (expanded);
-	}
+	var = ft_substr(arg, start, end - start + 1);
+	value = ft_getenv(var, shell);
+	tmp = expanded;
+	if (value)
+		expanded = ft_strjoin(expanded, value);
+	else
+		expanded = ft_strjoin(expanded, "");
+	free(tmp);
+	free(var);
+	return (expanded);
+}
+
+static void	find_var_end(char *arg, int *j)
+{
 	while (arg[*j + 1] && (ft_isalnum(arg[*j + 1]) || arg[*j + 1] == '_'))
 		(*j)++;
+}
+
+char	*expand_var(char *expanded, char *arg, int *j, t_shell *shell)
+{
+	int		start;
+
+	start = *j + 1;
+	if (!arg[start] || (!ft_isalnum(arg[start]) && arg[start] != '_'))
+		return (handle_invalid_var(expanded));
+	find_var_end(arg, j);
 	if (start <= *j)
-	{
-		var = ft_substr(arg, start, *j - start + 1);
-		value = ft_getenv(var, shell);
-		tmp = expanded;
-		if (value)
-			expanded = ft_strjoin(expanded, value);
-		else
-			expanded = ft_strjoin(expanded, "");
-		free(tmp);
-		free(var);
-	}
+		expanded = extract_and_expand(expanded, arg, start, *j, shell);
 	return (expanded);
 }
 
@@ -146,6 +161,35 @@ char	*process_arg(char *arg, t_shell *shell)
 	return (expanded);
 }
 
+static void	handle_empty_argv(t_execcmd *ecmd, int i)
+{
+	int j;
+
+	j = i;
+	while (ecmd->argv[j + 1])
+	{
+		ecmd->argv[j] = ecmd->argv[j + 1];
+		j++;
+	}
+	ecmd->argv[j] = NULL;
+}
+
+static int	is_empty_after_expansion(char *expanded)
+{
+	int i;
+	
+	if (!expanded)
+		return (1);
+	i = 0;
+	while (expanded[i])
+	{
+		if (!ft_isspace(expanded[i]))
+			return (0);
+		i++;
+	}
+	return (1);
+}
+
 void	expand_variables(t_execcmd *ecmd, t_shell *shell)
 {
 	int		i;
@@ -159,7 +203,14 @@ void	expand_variables(t_execcmd *ecmd, t_shell *shell)
 		if (dollar)
 		{
 			expanded = process_arg(ecmd->argv[i], shell);
-			ecmd->argv[i] = expanded;
+			if (is_empty_after_expansion(expanded))
+			{
+				free(expanded);
+				handle_empty_argv(ecmd, i);
+				continue;
+			}
+			else
+				ecmd->argv[i] = expanded;
 		}
 		i++;
 	}
