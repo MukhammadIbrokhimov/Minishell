@@ -6,7 +6,7 @@
 /*   By: gansari <gansari@student.42berlin.de>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/22 10:57:14 by muxammad          #+#    #+#             */
-/*   Updated: 2025/05/26 17:25:48 by gansari          ###   ########.fr       */
+/*   Updated: 2025/05/26 17:51:19 by gansari          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -95,24 +95,23 @@ static int should_override_redirection(int new_fd, t_cmd *existing_cmd)
  * @new_redir: New redirection command to use instead
  *
  * Returns: Modified command structure
+ *
+ * CRITICAL: This now preserves the overridden redirection for validation
  */
 static t_cmd *override_input_redirection(t_cmd *cmd, t_cmd *new_redir)
 {
-	t_redircmd *old_rcmd;
 	t_redircmd *new_rcmd;
 	
 	if (!cmd || cmd->type != REDIR || !new_redir || new_redir->type != REDIR)
 		return (new_redir);
 	
-	old_rcmd = (t_redircmd *)cmd;
 	new_rcmd = (t_redircmd *)new_redir;
 	
-	// Replace the old redirection's inner command with the new redirection's inner command
-	new_rcmd->cmd = old_rcmd->cmd;
+	// CRITICAL FIX: Instead of discarding the old redirection,
+	// we preserve it in the chain for validation while making the new one active
 	
-	// Free the old redirection structure (but not its inner command, which we just moved)
-	old_rcmd->cmd = NULL; // Prevent double-free
-	free_cmd(cmd);
+	// Keep the old redirection in the chain but mark it as overridden
+	new_rcmd->cmd = cmd;  // This preserves the old redirection in the chain
 	
 	return (new_redir);
 }
@@ -124,8 +123,7 @@ static t_cmd *override_input_redirection(t_cmd *cmd, t_cmd *new_redir)
  *
  * Returns: Command structure with redirections attached
  *
- * FIXED: Removed file validation during parsing - files should be checked at execution time
- * This allows pipes to work correctly even when left command has invalid redirections
+ * FIXED: Restore override logic for execution while preserving all redirections for validation
  */
 t_cmd	*parseredirs(t_cmd *cmd, t_parserState *ps)
 {
@@ -148,12 +146,12 @@ t_cmd	*parseredirs(t_cmd *cmd, t_parserState *ps)
 		if (file_tok.type != TOK_WORD)
 			ft_exit("\x1b[31mSyntax error: Expected filename after redirection\n");
 		
-		// REMOVED: File validation during parsing
-		// Files will be validated during execution instead
-		
 		new_redir = create_redirection(cmd, op_tok, file_tok, &heredoc);
 		if (!new_redir)
 			ft_exit("Error: Failed to create redirection command\n");
+		
+		// RESTORED: Override logic for execution behavior
+		// But now override_input_redirection preserves old redirections for validation
 		if (should_override_redirection(((t_redircmd *)new_redir)->fd, cmd))
 			cmd = override_input_redirection(cmd, new_redir);
 		else
