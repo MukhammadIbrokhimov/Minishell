@@ -6,7 +6,7 @@
 /*   By: gansari <gansari@student.42berlin.de>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/24 14:23:16 by gansari           #+#    #+#             */
-/*   Updated: 2025/05/26 14:40:30 by gansari          ###   ########.fr       */
+/*   Updated: 2025/05/26 15:01:29 by gansari          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,7 +31,7 @@ static int	open_file(char *file, int mode)
  */
 static void	print_error(char *file)
 {
-	ft_putstr_fd("sadaf: ", STDERR_FILENO);
+	ft_putstr_fd("\x1b[31msadaf: ", STDERR_FILENO);
 	ft_putstr_fd(file, STDERR_FILENO);
 	ft_putstr_fd(": ", STDERR_FILENO);
 	ft_perror("");
@@ -81,7 +81,7 @@ static int	handle_file_redirection(t_redircmd *rcmd)
 	filename = ft_substr(rcmd->file, 0, rcmd->efile - rcmd->file);
 	if (!filename)
 	{
-		ft_putstr_fd("sadaf: memory allocation error\n", STDERR_FILENO);
+		ft_putstr_fd("\x1b[31msadaf: memory allocation error\n", STDERR_FILENO);
 		return (-1);
 	}
 
@@ -90,7 +90,7 @@ static int	handle_file_redirection(t_redircmd *rcmd)
 	if (!clean_filename)
 	{
 		free(filename);
-		ft_putstr_fd("sadaf: memory allocation error\n", STDERR_FILENO);
+		ft_putstr_fd("\x1b[31msadaf: memory allocation error\n", STDERR_FILENO);
 		return (-1);
 	}
 

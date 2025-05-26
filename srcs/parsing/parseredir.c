@@ -6,7 +6,7 @@
 /*   By: gansari <gansari@student.42berlin.de>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/22 10:57:14 by muxammad          #+#    #+#             */
-/*   Updated: 2025/05/26 10:58:42 by gansari          ###   ########.fr       */
+/*   Updated: 2025/05/26 15:00:32 by gansari          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -148,36 +148,127 @@ static t_cmd *override_input_redirection(t_cmd *cmd, t_cmd *new_redir)
  * For multiple input redirections, the last one takes precedence (bash behavior).
  */
 
-t_cmd	*parseredirs(t_cmd *cmd, t_parserState *ps)
+/**
+ * validate_redirection_file - Validates that a redirection file can be opened
+ * @file_tok: Token containing the filename
+ * @mode: File mode flags (O_RDONLY, O_WRONLY, etc.)
+ * 
+ * Returns: 0 on success, -1 on failure
+ */
+static int validate_redirection_file(t_token file_tok, int mode)
 {
-	t_token	op_tok;
-	t_token	file_tok;
-	bool	heredoc;
-	t_cmd	*new_redir;
+    char *filename;
+    char *clean_filename;
+    int fd;
+    int result = 0;
 
-	heredoc = false;
-	while (1)
-	{
-		op_tok = gettoken(ps);
-		if (op_tok.type != TOK_LT && op_tok.type != TOK_GT
-			&& op_tok.type != TOK_DGT && op_tok.type != TOK_DLT)
-		{
-			ps->s = op_tok.start;
-			break ;
-		}
-		file_tok = gettoken(ps);
-		if (file_tok.type != TOK_WORD)
-			ft_exit("Syntax error: Expected filename after redirection\n");
-		
-		new_redir = create_redirection(cmd, op_tok, file_tok, &heredoc);
-		if (!new_redir)
-			ft_exit("Error: Failed to create redirection command\n");
-		
-		// For input redirections, check if we need to override existing ones
-		if (should_override_redirection(((t_redircmd *)new_redir)->fd, cmd))
-			cmd = override_input_redirection(cmd, new_redir);
-		else
-			cmd = new_redir;
-	}
-	return (cmd);
+    // Extract filename from tokens
+    filename = ft_substr(file_tok.start, 0, file_tok.end - file_tok.start);
+    if (!filename)
+        return (-1);
+
+    // Remove quotes if present
+    clean_filename = remove_quotes(filename);
+    if (!clean_filename)
+    {
+        free(filename);
+        return (-1);
+    }
+
+    // Try to open the file to validate it exists/can be created
+    if (mode & O_RDONLY)
+        fd = open(clean_filename, mode);
+    else
+        fd = open(clean_filename, mode, 0644);
+
+    if (fd < 0)
+    {
+        // Print error message for the failed file
+        ft_putstr_fd("\x1b[31msadaf: ", STDERR_FILENO);
+        ft_putstr_fd(clean_filename, STDERR_FILENO);
+        ft_putstr_fd(": ", STDERR_FILENO);
+        ft_putstr_fd(strerror(errno), STDERR_FILENO);
+        ft_putstr_fd("\n", STDERR_FILENO);
+        result = -1;
+    }
+    else
+    {
+        close(fd);  // Close immediately, we were just validating
+    }
+
+    free(filename);
+    free(clean_filename);
+    return (result);
 }
+
+/**
+ * parseredirs - Parses redirections in command line
+ * @cmd: Command structure to fill
+ * @ps: Parser state to track position
+ *
+ * Returns: Command structure with redirections attached
+ *
+ * Modified to validate ALL redirections before processing overrides.
+ * This ensures error messages are shown for all invalid files.
+ */
+t_cmd *parseredirs(t_cmd *cmd, t_parserState *ps)
+{
+    t_token op_tok;
+    t_token file_tok;
+    bool heredoc;
+    t_cmd *new_redir;
+    int mode;
+
+    heredoc = false;
+    while (1)
+    {
+        op_tok = gettoken(ps);
+        if (op_tok.type != TOK_LT && op_tok.type != TOK_GT
+            && op_tok.type != TOK_DGT && op_tok.type != TOK_DLT)
+        {
+            ps->s = op_tok.start;
+            break;
+        }
+        
+        file_tok = gettoken(ps);
+        if (file_tok.type != TOK_WORD)
+            ft_exit("Syntax error: Expected filename after redirection\n");
+
+        // Determine the file mode for this redirection
+        if (op_tok.type == TOK_LT)
+            mode = O_RDONLY;
+        else if (op_tok.type == TOK_GT)
+            mode = O_WRONLY | O_CREAT | O_TRUNC;
+        else if (op_tok.type == TOK_DGT)
+            mode = O_WRONLY | O_CREAT | O_APPEND;
+        else if (op_tok.type == TOK_DLT)
+        {
+            // Skip validation for heredocs (they don't use files)
+            mode = O_RDONLY;
+        }
+
+        // Validate the file BEFORE creating the redirection command
+        // This ensures we catch errors even if this redirection gets overridden
+        if (op_tok.type != TOK_DLT)  // Don't validate heredoc "files"
+        {
+            if (validate_redirection_file(file_tok, mode) < 0)
+            {
+                // Error message already printed, just exit
+                exit(1);
+            }
+        }
+
+        // Now create the redirection command
+        new_redir = create_redirection(cmd, op_tok, file_tok, &heredoc);
+        if (!new_redir)
+            ft_exit("Error: Failed to create redirection command\n");
+
+        // Apply override logic for input redirections
+        if (should_override_redirection(((t_redircmd *)new_redir)->fd, cmd))
+            cmd = override_input_redirection(cmd, new_redir);
+        else
+            cmd = new_redir;
+    }
+    return (cmd);
+}
+

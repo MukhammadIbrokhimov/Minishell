@@ -6,7 +6,7 @@
 /*   By: gansari <gansari@student.42berlin.de>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/24 14:22:03 by gansari           #+#    #+#             */
-/*   Updated: 2025/05/22 21:21:56 by gansari          ###   ########.fr       */
+/*   Updated: 2025/05/26 15:01:07 by gansari          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -73,7 +73,7 @@ static int	check_if_directory(char *path)
  */
 static void	command_not_found(char *cmd)
 {
-	ft_putstr_fd("sadaf: ", 2);
+	ft_putstr_fd("\x1b[31msadaf: ", 2);
 	ft_putstr_fd(cmd, 2);
 	ft_putstr_fd(": command not found\n", 2);
 	exit(127);
@@ -92,7 +92,7 @@ static void	command_not_found(char *cmd)
  */
 static void	handle_directory_error(char *cmd)
 {
-	ft_putstr_fd("sadaf: ", 2);
+	ft_putstr_fd("\x1b[31msadaf: ", 2);
 	ft_putstr_fd(cmd, 2);
 	ft_putstr_fd(": Is a directory\n", 2);
 	exit(126);
