@@ -6,7 +6,7 @@
 /*   By: gansari <gansari@student.42berlin.de>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/24 14:22:03 by gansari           #+#    #+#             */
-/*   Updated: 2025/05/26 19:12:10 by gansari          ###   ########.fr       */
+/*   Updated: 2025/05/26 20:48:31 by gansari          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,7 +37,7 @@ static void	command_not_found(char *cmd)
 		cmd = "(null)";
 	ft_putstr_fd("\x1b[31msadaf: ", 2);
 	ft_putstr_fd(cmd, 2);
-	ft_putstr_fd(": No such file or directory\n", 2);
+	ft_putstr_fd(": command not found\n", 2);
 	exit(127);
 }
 
