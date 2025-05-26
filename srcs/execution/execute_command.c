@@ -6,16 +6,12 @@
 /*   By: gansari <gansari@student.42berlin.de>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/24 14:22:03 by gansari           #+#    #+#             */
-/*   Updated: 2025/05/26 18:17:35 by gansari          ###   ########.fr       */
+/*   Updated: 2025/05/26 19:05:53 by gansari          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../includes/sadaf.h"
 
-/**
- * handle_builtin - Executes a shell built-in command and 
- * exits the process
- */
 static void	handle_builtin(t_execcmd *ecmd, t_shell *shell)
 {
 	int	exit_code;
@@ -24,34 +20,31 @@ static void	handle_builtin(t_execcmd *ecmd, t_shell *shell)
 	exit(exit_code);
 }
 
-/**
- * check_if_directory - Checks if the path is a directory
- */
 static int	check_if_directory(char *path)
 {
 	struct stat	path_stat;
 
+	if (!path || !*path)
+		return (0);
 	if (stat(path, &path_stat) == 0)
 		return (S_ISDIR(path_stat.st_mode));
 	return (0);
 }
 
-/**
- * command_not_found - Handles the case where a command doesn't exist
- */
 static void	command_not_found(char *cmd)
 {
+	if (!cmd)
+		cmd = "(null)";
 	ft_putstr_fd("\x1b[31msadaf: ", 2);
 	ft_putstr_fd(cmd, 2);
-	ft_putstr_fd(": command not found\n", 2);
+	ft_putstr_fd(": No such file or directory\n", 2);
 	exit(127);
 }
 
-/**
- * handle_directory_error - Handles when trying to execute a directory
- */
 static void	handle_directory_error(char *cmd)
 {
+	if (!cmd)
+		cmd = "(null)";
 	ft_putstr_fd("\x1b[31msadaf: ", 2);
 	ft_putstr_fd(cmd, 2);
 	ft_putstr_fd(": Is a directory\n", 2);
@@ -76,9 +69,6 @@ static char	**prepare_unquoted_args(char **argv, char *path)
 	return (unquoted_argv);
 }
 
-/**
- * exec_external_command - Executes an external (non-built-in) command
- */
 static void	exec_external_command(char *path, char **argv, t_shell *shell)
 {
 	char	**env_array;
@@ -103,16 +93,12 @@ static void	exec_external_command(char *path, char **argv, t_shell *shell)
 	}
 }
 
-/**
- * try_execute_as_command - Attempts to execute expanded variable as command
- */
 static void	try_execute_as_command(char *expanded_cmd, t_shell *shell)
 {
 	char	**tokens;
 	char	*path;
 	int		i;
 
-	// Split the expanded command into tokens
 	tokens = ft_split(expanded_cmd, ' ');
 	if (!tokens || !tokens[0])
 	{
@@ -121,8 +107,6 @@ static void	try_execute_as_command(char *expanded_cmd, t_shell *shell)
 		command_not_found(expanded_cmd);
 		return;
 	}
-
-	// Check if first token is a builtin
 	if (is_builtin(tokens[0]))
 	{
 		t_execcmd	cmd;
@@ -141,12 +125,9 @@ static void	try_execute_as_command(char *expanded_cmd, t_shell *shell)
 		cleanup_tokens(tokens);
 		exit(status);
 	}
-
-	// Try to find the command in PATH
 	path = find_command_path(tokens[0], shell);
 	if (!path)
 	{
-		// Check if it's a directory
 		if (check_if_directory(tokens[0]))
 		{
 			cleanup_tokens(tokens);
@@ -155,24 +136,14 @@ static void	try_execute_as_command(char *expanded_cmd, t_shell *shell)
 		cleanup_tokens(tokens);
 		command_not_found(tokens[0]);
 	}
-
-	// Execute the external command
 	exec_external_command(path, tokens, shell);
 }
 
-/**
- * FIXED: handle_empty_command - Handle when command expands to empty string
- */
 static void	handle_empty_command(void)
 {
-	// When a command expands to empty (like $EMPTY), just exit successfully
-	// This matches bash behavior
 	exit(0);
 }
 
-/**
- * FIXED: is_empty_or_whitespace - Check if string is empty or only whitespace
- */
 static int	is_empty_or_whitespace(char *str)
 {
 	int i;
@@ -190,9 +161,6 @@ static int	is_empty_or_whitespace(char *str)
 	return (1);
 }
 
-/**
- * FIXED: execute_command - Main function for executing a command
- */
 void	execute_command(t_execcmd *ecmd, t_shell *shell)
 {
 	char	*path;
@@ -201,7 +169,6 @@ void	execute_command(t_execcmd *ecmd, t_shell *shell)
 	check_cmd_args(ecmd, shell);
 	expand_variables(ecmd, shell);
 	
-	// CRITICAL FIX: Handle case where expansion results in empty command
 	if (!ecmd->argv[0] || is_empty_or_whitespace(ecmd->argv[0]))
 	{
 		handle_empty_command();
@@ -215,41 +182,40 @@ void	execute_command(t_execcmd *ecmd, t_shell *shell)
 		exit(1);
 	}
 
-	// CRITICAL FIX: Handle case where after removing quotes, command is empty
 	if (is_empty_or_whitespace(cmd_no_quotes))
 	{
 		free(cmd_no_quotes);
 		handle_empty_command();
 		return;
 	}
-
-	// Check if the expanded command contains spaces (indicating it might be a command with args)
-	if (ft_strchr(cmd_no_quotes, ' '))
+	if (ft_strchr(cmd_no_quotes, ' ') && 
+		cmd_no_quotes[0] != '/' && 
+		!(cmd_no_quotes[0] == '.' && cmd_no_quotes[1] == '/') &&
+		!(cmd_no_quotes[0] == '.' && cmd_no_quotes[1] == '.' && cmd_no_quotes[2] == '/'))
 	{
 		try_execute_as_command(cmd_no_quotes, shell);
 		free(cmd_no_quotes);
 		return;
 	}
-
 	if (is_builtin(cmd_no_quotes))
 	{
 		free(cmd_no_quotes);
 		handle_builtin(ecmd, shell);
 		return ;
 	}
-
-	// Check if it's a directory before trying to find path
 	if (check_if_directory(cmd_no_quotes))
 	{
-		handle_directory_error(cmd_no_quotes);
+		command_not_found(cmd_no_quotes);
 		free(cmd_no_quotes);
 		return;
 	}
-
 	path = find_command_path(cmd_no_quotes, shell);
 	free(cmd_no_quotes);
 	if (!path)
+	{
 		command_not_found(ecmd->argv[0]);
+		return;
+	}
 	exec_external_command(path, ecmd->argv, shell);
 	ft_error("execute_command: unreachable code");
 	exit(1);
