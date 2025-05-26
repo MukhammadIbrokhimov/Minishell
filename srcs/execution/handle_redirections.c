@@ -6,7 +6,7 @@
 /*   By: gansari <gansari@student.42berlin.de>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/24 14:23:16 by gansari           #+#    #+#             */
-/*   Updated: 2025/05/26 15:01:29 by gansari          ###   ########.fr       */
+/*   Updated: 2025/05/26 15:18:57 by gansari          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -77,15 +77,12 @@ static int	handle_file_redirection(t_redircmd *rcmd)
 	char	*filename;
 	char	*clean_filename;
 
-	// Extract filename from the parsed tokens
 	filename = ft_substr(rcmd->file, 0, rcmd->efile - rcmd->file);
 	if (!filename)
 	{
 		ft_putstr_fd("\x1b[31msadaf: memory allocation error\n", STDERR_FILENO);
 		return (-1);
 	}
-
-	// Remove quotes from filename if present
 	clean_filename = remove_quotes(filename);
 	if (!clean_filename)
 	{
@@ -93,18 +90,13 @@ static int	handle_file_redirection(t_redircmd *rcmd)
 		ft_putstr_fd("\x1b[31msadaf: memory allocation error\n", STDERR_FILENO);
 		return (-1);
 	}
-
-	// Open the file with appropriate mode
 	fd = open_file(clean_filename, rcmd->mode);
-	
-	// Set up the redirection
 	if (setup_file_redirection(fd, rcmd->fd, clean_filename) < 0)
 	{
 		free(filename);
 		free(clean_filename);
 		return (-1);
 	}
-	
 	free(filename);
 	free(clean_filename);
 	return (0);
@@ -137,17 +129,11 @@ void	handle_redirections(t_redircmd *rcmd, t_shell *shell)
 {
 	int result;
 
-	// Handle the redirection based on type
 	if (rcmd->file)
 		result = handle_file_redirection(rcmd);
 	else
 		result = handle_fd_redirection(rcmd);
-	
-	// If redirection failed, exit with error
 	if (result < 0)
 		exit(1);
-	
-	// Execute the command with redirections in place
-	// This is crucial - the command runs with stdin/stdout redirected
 	runcmd(rcmd->cmd, shell);
 }

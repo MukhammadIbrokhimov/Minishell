@@ -6,7 +6,7 @@
 /*   By: gansari <gansari@student.42berlin.de>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/12 15:35:27 by gansari           #+#    #+#             */
-/*   Updated: 2025/05/26 14:22:32 by gansari          ###   ########.fr       */
+/*   Updated: 2025/05/26 15:17:01 by gansari          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -114,7 +114,7 @@ void	execution(char *buf, t_shell *shell)
 	t_cmd	*cmd;
 
 	cmd = parsecmd(buf);
-    // printf("=== PARSED COMMAND ===\n");
+	// printf("=== PARSED COMMAND ===\n");
 	// debug_print_cmd(cmd, 0);
 	// printf("===================\n");
 	if (collect_all_heredocs(cmd, shell) < 0)
