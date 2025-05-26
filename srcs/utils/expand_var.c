@@ -6,7 +6,7 @@
 /*   By: gansari <gansari@student.42berlin.de>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/24 15:11:20 by gansari           #+#    #+#             */
-/*   Updated: 2025/05/22 20:15:29 by gansari          ###   ########.fr       */
+/*   Updated: 2025/05/26 18:22:37 by gansari          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -146,6 +146,47 @@ char	*process_arg(char *arg, t_shell *shell)
 	return (expanded);
 }
 
+/**
+ * FIXED: handle_empty_argv - Handle when argv[i] becomes empty after expansion
+ */
+static void	handle_empty_argv(t_execcmd *ecmd, int i)
+{
+	int j;
+	
+	// Shift all subsequent arguments left to fill the gap
+	j = i;
+	while (ecmd->argv[j + 1])
+	{
+		ecmd->argv[j] = ecmd->argv[j + 1];
+		j++;
+	}
+	ecmd->argv[j] = NULL;
+}
+
+/**
+ * FIXED: is_empty_after_expansion - Check if argument is empty after expansion
+ */
+static int	is_empty_after_expansion(char *expanded)
+{
+	int i;
+	
+	if (!expanded)
+		return (1);
+	
+	// Check if string is empty or only whitespace
+	i = 0;
+	while (expanded[i])
+	{
+		if (!ft_isspace(expanded[i]))
+			return (0);
+		i++;
+	}
+	return (1);
+}
+
+/**
+ * FIXED: expand_variables - Expand variables and handle empty results correctly
+ */
 void	expand_variables(t_execcmd *ecmd, t_shell *shell)
 {
 	int		i;
@@ -159,7 +200,19 @@ void	expand_variables(t_execcmd *ecmd, t_shell *shell)
 		if (dollar)
 		{
 			expanded = process_arg(ecmd->argv[i], shell);
-			ecmd->argv[i] = expanded;
+			
+			// CRITICAL FIX: Handle empty expansion results
+			if (is_empty_after_expansion(expanded))
+			{
+				free(expanded);
+				handle_empty_argv(ecmd, i);
+				// Don't increment i since we shifted arguments left
+				continue;
+			}
+			else
+			{
+				ecmd->argv[i] = expanded;
+			}
 		}
 		i++;
 	}

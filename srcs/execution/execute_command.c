@@ -6,7 +6,7 @@
 /*   By: gansari <gansari@student.42berlin.de>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/24 14:22:03 by gansari           #+#    #+#             */
-/*   Updated: 2025/05/26 15:01:07 by gansari          ###   ########.fr       */
+/*   Updated: 2025/05/26 18:17:35 by gansari          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,23 +15,7 @@
 /**
  * handle_builtin - Executes a shell built-in command and 
  * exits the process
- *
- * This function handles the execution of shell built-in commands such as
- * cd, echo, pwd, export, unset, env, and exit. It calls the appropriate
- * builtin function based on the command name found in ecmd->argv[0].
- *
- * The exec_builtin function returns an exit code indicating success (0)
- * or failure (non-zero). This exit code is then used to exit the process
- * with the appropriate status, allowing the parent process to determine
- * if the built-in command succeeded or failed.
- *
- * @param ecmd   Pointer to the exec command structure 
- * containing command and args
- * @param shell  Pointer to the shell structure with environment and state
- *
- * Note: This function does not return - it always exits the process.
  */
-
 static void	handle_builtin(t_execcmd *ecmd, t_shell *shell)
 {
 	int	exit_code;
@@ -42,13 +26,6 @@ static void	handle_builtin(t_execcmd *ecmd, t_shell *shell)
 
 /**
  * check_if_directory - Checks if the path is a directory
- *
- * Uses stat() to check if the given path exists and is a directory.
- * This helps provide the correct error message when trying to execute
- * a directory path.
- *
- * @param path  The path to check
- * @return      1 if it's a directory, 0 otherwise
  */
 static int	check_if_directory(char *path)
 {
@@ -61,15 +38,6 @@ static int	check_if_directory(char *path)
 
 /**
  * command_not_found - Handles the case where a command doesn't exist
- *
- * This function displays an error message when a command can't be found in PATH
- * or as a built-in. It prints the standard shell error message format to stderr,
- * then exits the process with status 127, which is the conventional exit code
- * for "command not found" in Unix shells.
- *
- * @param cmd  The command name that was not found
- *
- * Note: This function does not return - it always exits the process.
  */
 static void	command_not_found(char *cmd)
 {
@@ -81,14 +49,6 @@ static void	command_not_found(char *cmd)
 
 /**
  * handle_directory_error - Handles when trying to execute a directory
- *
- * This function provides the correct error message when a user tries
- * to execute a directory (like $HOME). It prints "Is a directory" error
- * and exits with code 126.
- *
- * @param cmd  The directory path that was attempted to execute
- *
- * Note: This function does not return - it always exits the process.
  */
 static void	handle_directory_error(char *cmd)
 {
@@ -118,23 +78,6 @@ static char	**prepare_unquoted_args(char **argv, char *path)
 
 /**
  * exec_external_command - Executes an external (non-built-in) command
- *
- * This function is responsible for executing external commands by:
- * 1. Converting the shell's environment linked list to a string array format
- *    compatible with execve()
- * 2. Calling execve() with the command path, arguments, and environment
- * 3. Cleaning up resources if execve() fails
- * 4. Reporting errors and exiting with appropriate status
- *
- * If execve() succeeds, it replaces the current process, so the function
- * only returns if an error occurred.
- *
- * @param path   Full path to the executable
- * @param argv   Argument array (including command as argv[0])
- * @param shell  Shell structure with environment variables
- *
- * Note: This function does not return on success - it either replaces
- * the process or exits with error status on failure.
  */
 static void	exec_external_command(char *path, char **argv, t_shell *shell)
 {
@@ -162,12 +105,6 @@ static void	exec_external_command(char *path, char **argv, t_shell *shell)
 
 /**
  * try_execute_as_command - Attempts to execute expanded variable as command
- *
- * When a variable expands to something like "ls -l", this function
- * tries to parse and execute it as a shell command.
- *
- * @param expanded_cmd  The expanded command string
- * @param shell         Shell structure
  */
 static void	try_execute_as_command(char *expanded_cmd, t_shell *shell)
 {
@@ -224,28 +161,37 @@ static void	try_execute_as_command(char *expanded_cmd, t_shell *shell)
 }
 
 /**
- * execute_command - Main function for executing a command
- *
- * This is the primary function that handles command execution. It:
- * 1. Handles empty commands (just exit with success)
- * 2. Expands any environment variables in the command arguments
- * 3. Checks if the command is a shell built-in, and handles it if so
- * 4. Otherwise, searches for the command in PATH
- * 5. Reports an error if the command is not found
- * 6. Executes the external command if found
- *
- * This function serves as the coordinator between the various command
- * execution paths (built-ins vs. external commands) and handles the
- * preparation necessary before executing commands.
- *
- * @param ecmd   Execution command structure with command and args
- * @param shell  Shell structure with environment and state
- *
- * Note: This function does not return - it either:
- * - Exits with status 0 for empty commands
- * - Calls handle_builtin() which exits
- * - Calls command_not_found() which exits
- * - Calls exec_external_command() which replaces the process or exits
+ * FIXED: handle_empty_command - Handle when command expands to empty string
+ */
+static void	handle_empty_command(void)
+{
+	// When a command expands to empty (like $EMPTY), just exit successfully
+	// This matches bash behavior
+	exit(0);
+}
+
+/**
+ * FIXED: is_empty_or_whitespace - Check if string is empty or only whitespace
+ */
+static int	is_empty_or_whitespace(char *str)
+{
+	int i;
+	
+	if (!str)
+		return (1);
+	
+	i = 0;
+	while (str[i])
+	{
+		if (!ft_isspace(str[i]))
+			return (0);
+		i++;
+	}
+	return (1);
+}
+
+/**
+ * FIXED: execute_command - Main function for executing a command
  */
 void	execute_command(t_execcmd *ecmd, t_shell *shell)
 {
@@ -254,11 +200,27 @@ void	execute_command(t_execcmd *ecmd, t_shell *shell)
 
 	check_cmd_args(ecmd, shell);
 	expand_variables(ecmd, shell);
+	
+	// CRITICAL FIX: Handle case where expansion results in empty command
+	if (!ecmd->argv[0] || is_empty_or_whitespace(ecmd->argv[0]))
+	{
+		handle_empty_command();
+		return;
+	}
+	
 	cmd_no_quotes = remove_quotes(ecmd->argv[0]);
 	if (!cmd_no_quotes)
 	{
 		ft_error("remove_quotes failed");
 		exit(1);
+	}
+
+	// CRITICAL FIX: Handle case where after removing quotes, command is empty
+	if (is_empty_or_whitespace(cmd_no_quotes))
+	{
+		free(cmd_no_quotes);
+		handle_empty_command();
+		return;
 	}
 
 	// Check if the expanded command contains spaces (indicating it might be a command with args)
