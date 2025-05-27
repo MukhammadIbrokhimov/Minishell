@@ -249,6 +249,15 @@ int		dup_and_report(int fd);
 int		close_and_report(int fd);
 void	handle_list(t_listcmd *lcmd, t_shell *shell);
 void	handle_background(t_backcmd *bcmd, t_shell *shell);
+void	command_not_found(char *cmd);
+void	handle_directory_error(char *cmd);
+int		check_if_directory(char *path);
+char	**prepare_unquoted_args(char **argv, char *path);
+void	exec_external_command(char *path, char **argv, t_shell *shell);
+void	setup_builtin_cmd(t_execcmd *cmd, char **tokens);
+void	handle_builtin_tokens(char **tokens, t_shell *shell);
+int		is_empty_or_whitespace(char *str);
+int	is_complex_command(char *cmd_no_quotes);
 
 /* Utils */
 void	ft_error(char *msg);

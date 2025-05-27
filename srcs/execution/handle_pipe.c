@@ -62,7 +62,8 @@ int	setup_pipe_output(int *fd)
  */
 static void	wait_for_children(int pid1, int pid2, t_shell *shell)
 {
-	int	status1, status2;
+	int	status1;
+	int	status2;
 
 	waitpid(pid1, &status1, 0);
 	waitpid(pid2, &status2, 0);

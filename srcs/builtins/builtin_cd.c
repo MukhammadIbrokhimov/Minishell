@@ -38,12 +38,12 @@ static char	*get_cd_path(t_execcmd *ecmd, t_shell *shell)
 		}
 		return (path);
 	}
-		if (ecmd->argv[2])
+	if (ecmd->argv[2])
 	{
 		ft_putstr_fd("\x1b[31msadaf: cd: too many arguments\n", STDERR_FILENO);
 		return (NULL);
 	}
-		if (ft_strchr(ecmd->argv[1], ' '))
+	if (ft_strchr(ecmd->argv[1], ' '))
 	{
 		ft_putstr_fd("\x1b[31msadaf: cd: too many arguments\n", STDERR_FILENO);
 		return (NULL);
