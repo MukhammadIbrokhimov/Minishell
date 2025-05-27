@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   exec_utils.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: gansari <gansari@student.42berlin.de>      +#+  +:+       +#+        */
+/*   By: mukibrok <mukibrok@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/12 15:35:27 by gansari           #+#    #+#             */
-/*   Updated: 2025/05/26 19:14:47 by gansari          ###   ########.fr       */
+/*   Updated: 2025/05/27 13:36:28 by mukibrok         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,50 +67,6 @@ static void	execute_forked(t_cmd *cmd, t_shell *shell)
 	setup_signals(0, shell);
 }
 
-// void debug_print_cmd(t_cmd *cmd, int depth) {
-//     if (!cmd) return;
-    
-//     for (int i = 0; i < depth; i++) printf("  ");
-    
-//     if (cmd->type == EXEC) {
-//         t_execcmd *ecmd = (t_execcmd *)cmd;
-//         printf("EXEC: ");
-//         for (int i = 0; ecmd->argv[i]; i++) {
-//             printf("[%s] ", ecmd->argv[i]);
-//         }
-//         printf("\n");
-//     }
-//     else if (cmd->type == REDIR) {
-//         t_redircmd *rcmd = (t_redircmd *)cmd;
-//         char *filename = ft_substr(rcmd->file, 0, rcmd->efile - rcmd->file);
-//         printf("REDIR: fd=%d file=[%s] mode=%d\n", rcmd->fd, filename, rcmd->mode);
-//         free(filename);
-//         debug_print_cmd(rcmd->cmd, depth + 1);
-//     }
-//     else if (cmd->type == PIPE) {
-//         t_pipecmd *pcmd = (t_pipecmd *)cmd;
-//         printf("PIPE:\n");
-//         debug_print_cmd(pcmd->left, depth + 1);
-//         debug_print_cmd(pcmd->right, depth + 1);
-//     }
-//     else if (cmd->type == LIST) {
-//         t_listcmd *lcmd = (t_listcmd *)cmd;
-//         printf("LIST:\n");
-//         debug_print_cmd(lcmd->left, depth + 1);
-//         debug_print_cmd(lcmd->right, depth + 1);
-//     }
-//     else if (cmd->type == BACK) {
-//         t_backcmd *bcmd = (t_backcmd *)cmd;
-//         printf("BACK:\n");
-//         debug_print_cmd(bcmd->cmd, depth + 1);
-//     }
-//     else {
-//         printf("UNKNOWN TYPE: %d\n", cmd->type);
-//     }
-// }
-// printf("=== PARSED COMMAND ===\n");
-// debug_print_cmd(cmd, 0);
-// printf("===================\n");
 void	execution(char *buf, t_shell *shell)
 {
 	t_cmd	*cmd;

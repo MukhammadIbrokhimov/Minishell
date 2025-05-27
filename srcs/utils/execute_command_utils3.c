@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   execute_command_utils3.c                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: gansari <gansari@student.42berlin.de>      +#+  +:+       +#+        */
+/*   By: mukibrok <mukibrok@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/27 12:51:00 by gansari           #+#    #+#             */
-/*   Updated: 2025/05/27 12:51:02 by gansari          ###   ########.fr       */
+/*   Updated: 2025/05/27 13:35:10 by mukibrok         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,4 +35,3 @@ int	is_complex_command(char *cmd_no_quotes)
 		&& !(cmd_no_quotes[0] == '.' && cmd_no_quotes[1] == '.'
 			&& cmd_no_quotes[2] == '/'));
 }
-

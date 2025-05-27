@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   sadaf.h                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: gansari <gansari@student.42berlin.de>      +#+  +:+       +#+        */
+/*   By: mukibrok <mukibrok@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/15 19:48:31 by muxammad          #+#    #+#             */
-/*   Updated: 2025/05/22 21:22:19 by gansari          ###   ########.fr       */
+/*   Updated: 2025/05/27 13:41:59 by mukibrok         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,6 +50,11 @@
 # define RESET   "\x1b[0m"
 
 extern int	g_signal_received;
+
+typedef struct s_util {
+	char	*expanded;
+	char	*arg;
+}	t_util; 
 
 enum e_tokenType {
 	TOK_EOF,
@@ -281,5 +286,12 @@ char	**allocate_unquoted_array(char **argv, char *path);
 void	handle_unquote_error(char **unquoted_argv, char *path);
 void	check_cmd_args(t_execcmd *ecmd, t_shell *shell);
 int		if_contains_lparen(const char *str);
+int		is_inside_single_quotes(char *arg, int pos);
+int		is_inside_double_quotes(char *arg, int pos);
+int		is_inside_single_quotes_up_to(char *arg, int pos);
+char	*expand_env_vars(char *str);
+char	*handle_exit_status(char *expanded, t_shell *shell);
+char	*expand_var(char *expanded, char *arg, int *j, t_shell *shell);
+char	*handle_invalid_var(char *expanded);
 
 #endif
