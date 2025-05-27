@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   sadaf_utils.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: gansari <gansari@student.42berlin.de>      +#+  +:+       +#+        */
+/*   By: mukibrok <mukibrok@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/17 16:38:55 by mukibrok          #+#    #+#             */
-/*   Updated: 2025/05/26 11:32:29 by gansari          ###   ########.fr       */
+/*   Updated: 2025/05/27 13:19:41 by mukibrok         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,16 +25,20 @@ static int	is_only_whitespace(const char *str)
 	return (1);
 }
 
-char *expand_env_vars(char *str)
+char	*expand_env_vars(char *str)
 {
+	char	*env_name;
+	char	*env_value;
+
 	if (!str || *str != '$')
 		return (str);
-
 	if (str[0] == '$')
 	{
-		char *env_name = str + 1;
-		char *env_value = getenv(env_name);
-		return (env_value ? env_value : str);
+		env_name = str + 1;
+		env_value = getenv(env_name);
+		if (!env_value)
+			return (str);
+		return (env_value);
 	}
 	return (str);
 }
