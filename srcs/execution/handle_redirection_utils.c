@@ -96,6 +96,12 @@ int	validate_single_redirection(t_redircmd *redir)
 	char	*clean_filename;
 	int		fd;
 
+	if (!redir->file)
+	{
+		if (redir->fd < 0)
+			return (-1);
+		return (0);
+	}
 	clean_filename = extract_filename(redir);
 	if (!clean_filename)
 		return (-1);

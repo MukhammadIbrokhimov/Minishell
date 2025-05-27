@@ -6,7 +6,7 @@
 /*   By: mukibrok <mukibrok@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/24 14:23:16 by gansari           #+#    #+#             */
-/*   Updated: 2025/05/27 15:00:30 by mukibrok         ###   ########.fr       */
+/*   Updated: 2025/05/27 17:44:29 by gansari          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,6 +32,11 @@ int	open_file(char *file, int mode)
  */
 static int	handle_fd_redirection(t_redircmd *rcmd)
 {
+	if (rcmd->fd < 0)
+	{
+		ft_putstr_fd("Error: Invalid heredoc file descriptor\n", STDERR_FILENO);
+		return (-1);
+	}
 	if (dup2(rcmd->fd, STDIN_FILENO) == -1)
 	{
 		ft_perror("sadaf: dup2");
