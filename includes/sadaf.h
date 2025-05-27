@@ -158,6 +158,7 @@ void	free_cmd(t_cmd *cmd);
 void	free_env_list(t_env *env_list);
 void	free_shell(t_shell *shell);
 void	ft_exit(char *msg);
+
 /* Parsing */
 t_cmd	*parsecmd(char *buf);
 t_cmd	*parseline(t_parserState *ps);
@@ -167,6 +168,13 @@ t_cmd	*parseredirs(t_cmd *cmd, t_parserState *ps);
 t_cmd	*parseblock(t_parserState *ps);
 t_token	gettoken(t_parserState *ps);
 t_cmd	*nulterminate(t_cmd *cmd);
+void	fill_redirinfo(
+			t_redirinfo *info, t_token op_tok, bool *heredoc_flag);
+t_cmd	*create_redirection(
+			t_cmd *cmd, t_token op_tok, t_token file_tok, bool *heredoc_flag);
+int		should_override_redirection(int new_fd, t_cmd *existing_cmd);
+t_cmd	*override_input_redirection(t_cmd *cmd, t_cmd *new_redir);
+bool	is_redirection_token(int token_type);
 
 /* token parts */
 int		is_seq_token(t_token *tok, char **s);
@@ -244,6 +252,21 @@ void	handle_sigquit(int sig);
 void	runcmd(t_cmd *cmd, t_shell *shell);
 void	execute_command(t_execcmd *ecmd, t_shell *shell);
 void	handle_redirections(t_redircmd *rcmd, t_shell *shell);
+int		setup_file_redirection(int fd, int target_fd, char *file);
+int		collect_all_redirections(t_redircmd *rcmd,
+			t_redircmd **redirections, int *count);
+char	*extract_filename(t_redircmd *redir);
+int		open_file_with_mode(char *clean_filename, int mode);
+int		validate_single_redirection(t_redircmd *redir);
+int		validate_redirections_left_to_right(t_redircmd **redirections,
+			int count);
+int		validate_all_redirections(t_redircmd *rcmd);
+int		extract_and_clean_filename(t_redircmd *rcmd, char **filename,
+			char **clean_filename);
+void	cleanup_filenames(char *filename, char *clean_filename);
+int		handle_file_redirection(t_redircmd *rcmd);
+void	print_error(char *file);
+int		open_file(char *file, int mode);
 void	handle_pipe(t_pipecmd *pcmd, t_shell *shell);
 int		execute_left_cmd(t_pipecmd *pcmd, t_shell *shell, int *fd);
 int		execute_right_cmd(t_pipecmd *pcmd, t_shell *shell, int *fd);
@@ -262,7 +285,7 @@ void	exec_external_command(char *path, char **argv, t_shell *shell);
 void	setup_builtin_cmd(t_execcmd *cmd, char **tokens);
 void	handle_builtin_tokens(char **tokens, t_shell *shell);
 int		is_empty_or_whitespace(char *str);
-int	is_complex_command(char *cmd_no_quotes);
+int		is_complex_command(char *cmd_no_quotes);
 
 /* Utils */
 void	ft_error(char *msg);
