@@ -6,7 +6,7 @@
 /*   By: mukibrok <mukibrok@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/15 19:48:31 by muxammad          #+#    #+#             */
-/*   Updated: 2025/05/27 13:41:59 by mukibrok         ###   ########.fr       */
+/*   Updated: 2025/05/27 16:07:05 by mukibrok         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -148,7 +148,8 @@ typedef struct s_parsectx {
 	t_parserState	*ps;
 }	t_parsectx;
 
-/* Main functions */
+/* Main function./test_f
+s */
 t_shell	*init_shell(char **envp);
 char	*getcmd(void);
 int		process_command(char *buf, t_shell *shell);
@@ -265,7 +266,6 @@ int		extract_and_clean_filename(t_redircmd *rcmd, char **filename,
 			char **clean_filename);
 void	cleanup_filenames(char *filename, char *clean_filename);
 int		handle_file_redirection(t_redircmd *rcmd);
-void	print_error(char *file);
 int		open_file(char *file, int mode);
 void	handle_pipe(t_pipecmd *pcmd, t_shell *shell);
 int		execute_left_cmd(t_pipecmd *pcmd, t_shell *shell, int *fd);
@@ -286,6 +286,11 @@ void	setup_builtin_cmd(t_execcmd *cmd, char **tokens);
 void	handle_builtin_tokens(char **tokens, t_shell *shell);
 int		is_empty_or_whitespace(char *str);
 int		is_complex_command(char *cmd_no_quotes);
+void	handle_command_execution(char *cmd_no_quotes,
+			t_execcmd *ecmd, t_shell *shell);
+void	handle_builtin(t_execcmd *ecmd, t_shell *shell);
+void	handle_external_tokens(char **tokens, t_shell *shell);
+void	try_execute_as_command(char *expanded_cmd, t_shell *shell);
 
 /* Utils */
 void	ft_error(char *msg);

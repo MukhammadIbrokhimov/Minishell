@@ -3,16 +3,16 @@
 /*                                                        :::      ::::::::   */
 /*   execute_command.c                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: gansari <gansari@student.42berlin.de>      +#+  +:+       +#+        */
+/*   By: mukibrok <mukibrok@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/24 14:22:03 by gansari           #+#    #+#             */
-/*   Updated: 2025/05/26 20:48:31 by gansari          ###   ########.fr       */
+/*   Updated: 2025/05/27 16:05:31 by mukibrok         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../includes/sadaf.h"
 
-static void	handle_builtin(t_execcmd *ecmd, t_shell *shell)
+void	handle_builtin(t_execcmd *ecmd, t_shell *shell)
 {
 	int	exit_code;
 
@@ -20,7 +20,7 @@ static void	handle_builtin(t_execcmd *ecmd, t_shell *shell)
 	exit(exit_code);
 }
 
-static void	handle_external_tokens(char **tokens, t_shell *shell)
+void	handle_external_tokens(char **tokens, t_shell *shell)
 {
 	char	*path;
 
@@ -38,7 +38,7 @@ static void	handle_external_tokens(char **tokens, t_shell *shell)
 	exec_external_command(path, tokens, shell);
 }
 
-static void	try_execute_as_command(char *expanded_cmd, t_shell *shell)
+void	try_execute_as_command(char *expanded_cmd, t_shell *shell)
 {
 	char	**tokens;
 
@@ -56,35 +56,6 @@ static void	try_execute_as_command(char *expanded_cmd, t_shell *shell)
 		return ;
 	}
 	handle_external_tokens(tokens, shell);
-}
-
-static void	handle_command_execution(char *cmd_no_quotes,
-	t_execcmd *ecmd, t_shell *shell)
-{
-	char	*path;
-
-	if (is_complex_command(cmd_no_quotes))
-	{
-		try_execute_as_command(cmd_no_quotes, shell);
-		return ;
-	}
-	if (is_builtin(cmd_no_quotes))
-	{
-		handle_builtin(ecmd, shell);
-		return ;
-	}
-	if (check_if_directory(cmd_no_quotes))
-	{
-		command_not_found(cmd_no_quotes);
-		return ;
-	}
-	path = find_command_path(cmd_no_quotes, shell);
-	if (!path)
-	{
-		command_not_found(ecmd->argv[0]);
-		return ;
-	}
-	exec_external_command(path, ecmd->argv, shell);
 }
 
 void	execute_command(t_execcmd *ecmd, t_shell *shell)
