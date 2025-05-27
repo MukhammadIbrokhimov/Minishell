@@ -19,7 +19,7 @@ SRC      = $(SRC_DIR)/sadaf.c\
 		$(SRC_DIR)/cleaners/free_cmd.c $(SRC_DIR)/cleaners/free_envp.c\
 		$(SRC_DIR)/env/parse_envp.c\
 		$(SRC_DIR)/execution/collect_heredoc.c $(SRC_DIR)/execution/collect_heredoc_utils.c $(SRC_DIR)/execution/execute_command.c $(SRC_DIR)/execution/handle_background.c\
-		$(SRC_DIR)/execution/handle_list.c $(SRC_DIR)/execution/handle_pipe.c $(SRC_DIR)/execution/handle_pipe_leftcmd.c\
+		$(SRC_DIR)/execution/handle_list.c $(SRC_DIR)/execution/handle_pipe.c $(SRC_DIR)/execution/handle_pipe_leftcmd.c $(SRC_DIR)/execution/execute_command1.c\
 		$(SRC_DIR)/execution/handle_pipe_rightcmd.c $(SRC_DIR)/execution/handle_pipe_utils.c $(SRC_DIR)/execution/handle_redirections.c\
 		$(SRC_DIR)/execution/handle_redirection_utils.c $(SRC_DIR)/execution/handle_redirection_utils2.c\
 		$(SRC_DIR)/execution/heredoc.c $(SRC_DIR)/execution/path.c $(SRC_DIR)/execution/runcmd.c $(SRC_DIR)/execution/signals.c\
@@ -37,7 +37,7 @@ NAME     = minishell
 all: $(LIBFT) $(NAME)
 
 # Compile the program
-$(NAME): $(OBJ)
+$(NAME): $(OBJ) $(LIBFT)
 	@echo "$(CYAN)🔨  Compiling $(NAME)...$(RESET)"
 	@$(CC) $(CFLAGS) $(OBJ) $(LIBFT) -o $(NAME) -lreadline
 	@echo "$(GREEN)✅  Compilation successful!$(RESET)"

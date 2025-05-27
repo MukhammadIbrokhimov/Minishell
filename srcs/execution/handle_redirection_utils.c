@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   handle_redirection_utils.c                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: gansari <gansari@student.42berlin.de>      +#+  +:+       +#+        */
+/*   By: mukibrok <mukibrok@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/27 13:19:01 by gansari           #+#    #+#             */
-/*   Updated: 2025/05/27 17:42:10 by gansari          ###   ########.fr       */
+/*   Updated: 2025/05/27 15:00:20 by mukibrok         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,7 +24,7 @@ int	setup_file_redirection(int fd, int target_fd, char *file)
 {
 	if (fd < 0)
 	{
-		print_error(file);
+		ft_perror(file);
 		return (-1);
 	}
 	if (dup2(fd, target_fd) == -1)
@@ -108,7 +108,7 @@ int	validate_single_redirection(t_redircmd *redir)
 	fd = open_file_with_mode(clean_filename, redir->mode);
 	if (fd < 0)
 	{
-		print_error(clean_filename);
+		ft_perror(clean_filename);
 		free(clean_filename);
 		return (-1);
 	}

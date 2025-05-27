@@ -3,7 +3,7 @@
 /*                                                        :::      ::::::::   */
 /*   handle_redirections.c                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: gansari <gansari@student.42berlin.de>      +#+  +:+       +#+        */
+/*   By: mukibrok <mukibrok@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/24 14:23:16 by gansari           #+#    #+#             */
 /*   Updated: 2025/05/27 17:44:29 by gansari          ###   ########.fr       */
@@ -24,18 +24,6 @@ int	open_file(char *file, int mode)
 	else
 		fd = open(file, mode, 0644);
 	return (fd);
-}
-
-/*
- * print_error - Prints a formatted error message for file operations
- */
-void	print_error(char *file)
-{
-	ft_putstr_fd("\x1b[31msadaf: ", STDERR_FILENO);
-	ft_putstr_fd(file, STDERR_FILENO);
-	ft_putstr_fd(": ", STDERR_FILENO);
-	ft_putstr_fd(strerror(errno), STDERR_FILENO);
-	ft_putstr_fd("\n", STDERR_FILENO);
 }
 
 /*
