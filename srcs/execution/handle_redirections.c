@@ -63,22 +63,13 @@ static int	setup_file_redirection(int fd, int target_fd, char *file)
 	return (0);
 }
 
-/*
- * collect_all_redirections - Collect ALL redirections in order they appear (left to right)
- * @rcmd: Starting redirection command
- * @redirections: Array to store redirection pointers
- * @count: Pointer to count of redirections found
- * 
- * Returns: 0 on success, -1 on error
- * 
- * CRITICAL: This now collects ALL redirections including overridden ones
- * by walking the entire redirection chain, not just the active path
- */
-static int collect_all_redirections(t_redircmd *rcmd, t_redircmd **redirections, int *count)
+static int	collect_all_redirections(t_redircmd *rcmd,
+	t_redircmd **redirections, int *count)
 {
-	t_cmd *current;
-	int i = 0;
-	
+	t_cmd	*current;
+	int		i;
+
+	i = 0;
 	current = (t_cmd *)rcmd;
 	while (current && i < 10)
 	{
@@ -100,7 +91,7 @@ static int collect_all_redirections(t_redircmd *rcmd, t_redircmd **redirections,
  * 
  * Returns: 0 if valid, -1 if invalid
  */
-static char *extract_filename(t_redircmd *redir)
+static char	*extract_filename(t_redircmd *redir)
 {
 	char *filename;
 	char *clean_filename;

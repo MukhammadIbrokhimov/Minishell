@@ -12,6 +12,14 @@
 
 #include "../../includes/sadaf.h"
 
+static int	exit_error(char *arg)
+{
+	ft_putstr_fd("sadaf: exit: ", STDERR_FILENO);
+	ft_putstr_fd(arg, STDERR_FILENO);
+	ft_putstr_fd(": numeric argument required\n", STDERR_FILENO);
+	return (2);
+}
+
 /**
  * Validates whether the argument passed to exit is a valid numeric value.
  *
@@ -30,29 +38,16 @@ static int	validate_exit_arg(char *arg)
 	int	i;
 
 	if (!arg || !arg[0])
-	{
-		ft_putstr_fd("sadaf: exit: : numeric argument required\n", STDERR_FILENO);
-		return (2);
-	}
+		return (exit_error(arg));
 	i = 0;
 	if (arg[i] == '+' || arg[i] == '-')
 		i++;
 	if (!arg[i])
-	{
-		ft_putstr_fd("sadaf: exit: ", STDERR_FILENO);
-		ft_putstr_fd(arg, STDERR_FILENO);
-		ft_putstr_fd(": numeric argument required\n", STDERR_FILENO);
-		return (2);
-	}
+		return (exit_error(arg));
 	while (arg[i])
 	{
 		if (!ft_isdigit(arg[i]))
-		{
-			ft_putstr_fd("sadaf: exit: ", STDERR_FILENO);
-			ft_putstr_fd(arg, STDERR_FILENO);
-			ft_putstr_fd(": numeric argument required\n", STDERR_FILENO);
-			return (2);
-		}
+			return (exit_error(arg));
 		i++;
 	}
 	return (-1);
@@ -116,7 +111,6 @@ static int	handle_exit_args(t_execcmd *ecmd)
 	}
 	exit_code = ft_atoi(clean_arg);
 	free(clean_arg);
-	
 	if (ecmd->argv[2])
 	{
 		ft_putstr_fd("sadaf: exit: too many arguments\n", STDERR_FILENO);
