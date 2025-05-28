@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   sadaf.h                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mukibrok <mukibrok@student.42.fr>          +#+  +:+       +#+        */
+/*   By: gansari <gansari@student.42berlin.de>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/15 19:48:31 by muxammad          #+#    #+#             */
-/*   Updated: 2025/05/27 16:07:05 by mukibrok         ###   ########.fr       */
+/*   Updated: 2025/05/28 17:25:27 by gansari          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -298,6 +298,7 @@ void	ft_perror(char *msg);
 int		protected_fork(void);
 char	*ft_getenv(char *name, t_shell *shell);
 void	expand_variables(t_execcmd *ecmd, t_shell *shell);
+char	*expand_tilde(char *arg, t_shell *shell);
 void	cleanup_tokens(char **tokens);
 int		fork1(void);
 void	print_cmd(t_cmd *cmd);
@@ -307,7 +308,6 @@ int		setup_pipe_input(int *fd);
 void	execution(char *buf, t_shell *shell);
 void	prepare_for_command(t_shell *shell);
 int		should_skip_empty_command(char *buf);
-int		handle_special_command(char *buf);
 int		if_only_token(const char *str);
 int		is_valid_identifier(char *name);
 char	**allocate_unquoted_array(char **argv, char *path);
