@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   expand_var.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mukibrok <mukibrok@student.42.fr>          +#+  +:+       +#+        */
+/*   By: gansari <gansari@student.42berlin.de>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/24 15:11:20 by gansari           #+#    #+#             */
-/*   Updated: 2025/05/27 13:34:44 by mukibrok         ###   ########.fr       */
+/*   Updated: 2025/05/28 17:23:00 by gansari          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -85,14 +85,17 @@ void	expand_variables(t_execcmd *ecmd, t_shell *shell)
 	int		i;
 	char	*dollar;
 	char	*expanded;
+	char	*tilde_expanded;
 
 	i = 0;
 	while (ecmd->argv[i])
 	{
-		dollar = ft_strchr(ecmd->argv[i], '$');
+		tilde_expanded = expand_tilde(ecmd->argv[i], shell);
+		dollar = ft_strchr(tilde_expanded, '$');
 		if (dollar)
 		{
-			expanded = process_arg(ecmd->argv[i], shell);
+			expanded = process_arg(tilde_expanded, shell);
+			free(tilde_expanded);
 			if (is_empty_after_expansion(expanded))
 			{
 				free(expanded);
@@ -102,6 +105,9 @@ void	expand_variables(t_execcmd *ecmd, t_shell *shell)
 			else
 				ecmd->argv[i] = expanded;
 		}
+		else
+			ecmd->argv[i] = tilde_expanded;
 		i++;
 	}
 }
+
