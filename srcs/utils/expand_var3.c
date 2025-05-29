@@ -87,7 +87,7 @@ int	process_single_arg(t_execcmd *ecmd, t_shell *shell, int i)
 	else
 	{
 		ecmd->argv[i] = tilde_expanded;
-		if (tilde_expand)
+		if (tilde_expanded)
 			free(tilde_expanded);
 	}
 	return (0);

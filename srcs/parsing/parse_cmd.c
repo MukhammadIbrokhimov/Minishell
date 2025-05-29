@@ -135,6 +135,5 @@ t_cmd	*parsecmd(char *buf)
 		ft_exit("syntax error: unexpected token\n");
 	}
 	nulterminate(cmd);
-	print_cmd(cmd);
 	return (cmd);
 }
