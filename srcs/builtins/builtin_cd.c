@@ -24,33 +24,44 @@
  * @param shell The shell state containing environment variables
  * @return The target path as a string, or NULL if error
  */
-static char	*get_cd_path(t_execcmd *ecmd, t_shell *shell)
+static char *join_args(char **argv, int start)
 {
-	char	*path;
+    size_t	len;
 
-	if (!ecmd->argv[1])
-	{
-		path = ft_getenv("HOME", shell);
-		if (!path)
-		{
-			ft_putstr_fd("\x1b[31msadaf: cd: HOME not set\n", STDERR_FILENO);
-			return (NULL);
-		}
-		return (path);
-	}
-	if (ecmd->argv[2])
-	{
-		ft_putstr_fd("\x1b[31msadaf: cd: too many arguments\n", STDERR_FILENO);
-		return (NULL);
-	}
-	if (ft_strchr(ecmd->argv[1], ' '))
-	{
-		ft_putstr_fd("\x1b[31msadaf: cd: too many arguments\n", STDERR_FILENO);
-		return (NULL);
-	}
-	return (ecmd->argv[1]);
+	len = 0;
+    for (int i = start; argv[i]; i++)
+        len += strlen(argv[i]) + 1;
+    char *joined = malloc(len);
+    if (!joined)
+        return (NULL);
+    joined[0] = '\0';
+    for (int i = start; argv[i]; i++) {
+        strcat(joined, argv[i]);
+        if (argv[i + 1])
+            strcat(joined, " ");
+    }
+    return (joined);
 }
 
+static char *get_cd_path(t_execcmd *ecmd, t_shell *shell)
+{
+    char *path;
+
+    if (!ecmd->argv[1]) {
+        path = ft_getenv("HOME", shell);
+        if (!path) {
+            ft_putstr_fd("\x1b[31msadaf: cd: HOME not set\n", STDERR_FILENO);
+            return NULL;
+        }
+        return path;
+    }
+    path = join_args(ecmd->argv, 1);
+    if (!path) {
+        ft_putstr_fd("\x1b[31msadaf: cd: memory allocation error\n", STDERR_FILENO);
+        return NULL;
+    }
+    return path;
+}
 /**
  * change_directory - Attempts to change to the specified directory
  *
@@ -151,16 +162,25 @@ int	builtin_cd(t_execcmd *ecmd, t_shell *shell)
 	char	*path;
 	char	old_buf[2048];
 	char	current_buf[2048];
+	int		path_allocated = 0;
 
 	path = get_cd_path(ecmd, shell);
 	if (!path)
 		return (1);
+	if (ecmd->argv[1])
+		path_allocated = 1;
 	if (get_pwd(old_buf, sizeof(old_buf)))
-		return (1);
+		goto cleanup;
 	if (change_directory(path))
-		return (1);
+		goto cleanup;
 	if (get_pwd(current_buf, sizeof(current_buf)))
-		return (1);
+		goto cleanup;
 	update_env_variables(shell, current_buf, old_buf);
+	if (path_allocated)
+		free(path);
 	return (0);
+cleanup:
+	if (path_allocated)
+		free(path);
+	return (1);
 }
