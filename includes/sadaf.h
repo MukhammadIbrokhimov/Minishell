@@ -6,7 +6,7 @@
 /*   By: gansari <gansari@student.42berlin.de>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/15 19:48:31 by muxammad          #+#    #+#             */
-/*   Updated: 2025/05/28 17:25:27 by gansari          ###   ########.fr       */
+/*   Updated: 2025/05/29 16:37:55 by gansari          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -228,6 +228,10 @@ char	*get_continuation_input(char *initial_input);
 char	*combine_arguments(char **argv, int start_idx);
 int		is_quote_char(char c, int *quote_state);
 char	*process_quotes(char *input);
+void	handle_signal_interrupt(char *result);
+void	handle_eof_input(char *result);
+char	*append_line_to_result(char *result, char *line);
+void	process_input_line(char *result, char *line);
 
 /* Heredoc handling */
 int		handle_heredoc(char *delimiter, t_shell *shell);
@@ -299,6 +303,12 @@ int		protected_fork(void);
 char	*ft_getenv(char *name, t_shell *shell);
 void	expand_variables(t_execcmd *ecmd, t_shell *shell);
 char	*expand_tilde(char *arg, t_shell *shell);
+char	*handle_dollar_expansion(char *tilde_expanded, t_shell *shell);
+int		process_expanded_arg(t_execcmd *ecmd, char *expanded, int i);
+int		process_single_arg(t_execcmd *ecmd, t_shell *shell, int i);
+int		is_empty_after_expansion(char *expanded);
+void	handle_empty_argv(t_execcmd *ecmd, int i);
+char	*process_arguments(char *arg, t_shell *shell);
 void	cleanup_tokens(char **tokens);
 int		fork1(void);
 void	print_cmd(t_cmd *cmd);

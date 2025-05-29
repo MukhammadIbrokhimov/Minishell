@@ -6,7 +6,7 @@
 /*   By: gansari <gansari@student.42berlin.de>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/24 15:11:20 by gansari           #+#    #+#             */
-/*   Updated: 2025/05/28 17:23:00 by gansari          ###   ########.fr       */
+/*   Updated: 2025/05/29 16:37:25 by gansari          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,7 +25,7 @@ char	*append_char(char *expanded, char c)
 	return (expanded);
 }
 
-char	*process_arg(char *arg, t_shell *shell)
+char	*process_arguments(char *arg, t_shell *shell)
 {
 	int		j;
 	char	*expanded;
@@ -51,7 +51,7 @@ char	*process_arg(char *arg, t_shell *shell)
 	return (expanded);
 }
 
-static void	handle_empty_argv(t_execcmd *ecmd, int i)
+void	handle_empty_argv(t_execcmd *ecmd, int i)
 {
 	int	j;
 
@@ -64,7 +64,7 @@ static void	handle_empty_argv(t_execcmd *ecmd, int i)
 	ecmd->argv[j] = NULL;
 }
 
-static int	is_empty_after_expansion(char *expanded)
+int	is_empty_after_expansion(char *expanded)
 {
 	int	i;
 
@@ -82,32 +82,13 @@ static int	is_empty_after_expansion(char *expanded)
 
 void	expand_variables(t_execcmd *ecmd, t_shell *shell)
 {
-	int		i;
-	char	*dollar;
-	char	*expanded;
-	char	*tilde_expanded;
+	int	i;
 
 	i = 0;
 	while (ecmd->argv[i])
 	{
-		tilde_expanded = expand_tilde(ecmd->argv[i], shell);
-		dollar = ft_strchr(tilde_expanded, '$');
-		if (dollar)
-		{
-			expanded = process_arg(tilde_expanded, shell);
-			free(tilde_expanded);
-			if (is_empty_after_expansion(expanded))
-			{
-				free(expanded);
-				handle_empty_argv(ecmd, i);
-				continue ;
-			}
-			else
-				ecmd->argv[i] = expanded;
-		}
-		else
-			ecmd->argv[i] = tilde_expanded;
+		if (process_single_arg(ecmd, shell, i))
+			continue ;
 		i++;
 	}
 }
-
