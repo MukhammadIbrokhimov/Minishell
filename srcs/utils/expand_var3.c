@@ -81,14 +81,9 @@ int	process_single_arg(t_execcmd *ecmd, t_shell *shell, int i)
 	if (dollar)
 	{
 		expanded = handle_dollar_expansion(tilde_expanded, shell);
-		free(tilde_expanded);
 		return (process_expanded_arg(ecmd, expanded, i));
 	}
 	else
-	{
 		ecmd->argv[i] = tilde_expanded;
-		if (tilde_expand)
-			free(tilde_expanded);
-	}
 	return (0);
 }
