@@ -6,7 +6,7 @@
 /*   By: gansari <gansari@student.42berlin.de>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/28 17:14:49 by gansari           #+#    #+#             */
-/*   Updated: 2025/05/29 22:09:03 by gansari          ###   ########.fr       */
+/*   Updated: 2025/05/29 16:37:41 by gansari          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -85,7 +85,5 @@ int	process_single_arg(t_execcmd *ecmd, t_shell *shell, int i)
 	}
 	else
 		ecmd->argv[i] = tilde_expanded;
-	if (tilde_expanded)
-		free(tilde_expanded);
 	return (0);
 }
