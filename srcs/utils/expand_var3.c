@@ -1,23 +1,17 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   expand_var3.c                                      :+:      :+:    :+:   */
+/*   expand_var3.c - FIXED USING expand_var PATTERN    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: gansari <gansari@student.42berlin.de>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/28 17:14:49 by gansari           #+#    #+#             */
-/*   Updated: 2025/05/29 16:37:41 by gansari          ###   ########.fr       */
+/*   Updated: 2025/05/30 22:08:42 by gansari          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../includes/sadaf.h"
 
-/**
- * expand_tilde - Expands ~ to home directory
- * @path: The path that might start with ~
- * @shell: Shell state containing environment variables
- * @return: Expanded path or NULL if HOME not set
- */
 char	*expand_tilde(char *arg, t_shell *shell)
 {
 	char	*home;
@@ -70,20 +64,45 @@ int	process_expanded_arg(t_execcmd *ecmd, char *expanded, int i)
 	}
 }
 
+/**
+ * process_single_arg - FIXED using expand_var pattern
+ * The key insight: Don't replace ecmd->argv[i] if no expansion is needed
+ */
 int	process_single_arg(t_execcmd *ecmd, t_shell *shell, int i)
 {
 	char	*tilde_expanded;
 	char	*dollar;
 	char	*expanded;
 
+	// Step 1: Try tilde expansion
 	tilde_expanded = expand_tilde(ecmd->argv[i], shell);
+	if (!tilde_expanded)
+		return (0);
+	
+	// Step 2: Check if we have dollar signs to expand
 	dollar = ft_strchr(tilde_expanded, '$');
 	if (dollar)
 	{
+		// We have dollar expansion - handle it and clean up tilde_expanded
 		expanded = handle_dollar_expansion(tilde_expanded, shell);
+		// tilde_expanded is freed inside handle_dollar_expansion
 		return (process_expanded_arg(ecmd, expanded, i));
 	}
 	else
-		ecmd->argv[i] = tilde_expanded;
-	return (0);
+	{
+		// No dollar expansion needed
+		// CRITICAL FIX: Check if tilde expansion actually changed anything
+		if (ft_strcmp(tilde_expanded, ecmd->argv[i]) == 0)
+		{
+			// No change occurred, free the duplicate and keep original
+			free(tilde_expanded);
+			return (0);
+		}
+		else
+		{
+			// Tilde expansion changed something, use the new value
+			ecmd->argv[i] = tilde_expanded;
+			return (0);
+		}
+	}
 }
