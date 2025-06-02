@@ -5,19 +5,13 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: gansari <gansari@student.42berlin.de>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/05/28 17:14:49 by gansari           #+#    #+#             */
-/*   Updated: 2025/05/29 16:37:41 by gansari          ###   ########.fr       */
+/*   Created: 2025/06/02 11:06:33 by gansari           #+#    #+#             */
+/*   Updated: 2025/06/02 11:18:10 by gansari          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../includes/sadaf.h"
 
-/**
- * expand_tilde - Expands ~ to home directory
- * @path: The path that might start with ~
- * @shell: Shell state containing environment variables
- * @return: Expanded path or NULL if HOME not set
- */
 char	*expand_tilde(char *arg, t_shell *shell)
 {
 	char	*home;
@@ -70,20 +64,3 @@ int	process_expanded_arg(t_execcmd *ecmd, char *expanded, int i)
 	}
 }
 
-int	process_single_arg(t_execcmd *ecmd, t_shell *shell, int i)
-{
-	char	*tilde_expanded;
-	char	*dollar;
-	char	*expanded;
-
-	tilde_expanded = expand_tilde(ecmd->argv[i], shell);
-	dollar = ft_strchr(tilde_expanded, '$');
-	if (dollar)
-	{
-		expanded = handle_dollar_expansion(tilde_expanded, shell);
-		return (process_expanded_arg(ecmd, expanded, i));
-	}
-	else
-		ecmd->argv[i] = tilde_expanded;
-	return (0);
-}
