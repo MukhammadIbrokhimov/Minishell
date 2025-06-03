@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   sadaf.h                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mukibrok <mukibrok@student.42.fr>          +#+  +:+       +#+        */
+/*   By: gansari <gansari@student.42berlin.de>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/15 19:48:31 by muxammad          #+#    #+#             */
-/*   Updated: 2025/06/03 19:05:39 by mukibrok         ###   ########.fr       */
+/*   Updated: 2025/06/03 21:23:32 by gansari          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -336,5 +336,6 @@ char	*handle_invalid_var(char *expanded);
 int		handle_exit_command(t_execcmd *ecmd, t_shell *shell, t_cmd *cmd);
 void	try_execute_as_shell_script(char *path, char **argv, t_shell *shell);
 int		validate_numeric_argument(char *clean_arg);
+void	execute_builtin(t_cmd *cmd, t_shell *shell);
 
 #endif
