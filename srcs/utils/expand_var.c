@@ -6,7 +6,7 @@
 /*   By: mukibrok <mukibrok@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/24 15:11:20 by gansari           #+#    #+#             */
-/*   Updated: 2025/06/03 19:45:15 by mukibrok         ###   ########.fr       */
+/*   Updated: 2025/06/03 19:53:58 by mukibrok         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,7 +30,9 @@ char	*process_arguments(char *arg, t_shell *shell)
 	int		j;
 	char	*expanded;
 
-	expanded = NULL;
+	expanded = ft_strdup("");
+	if (!expanded)
+		return (NULL);
 	j = 0;
 	while (arg[j])
 	{
