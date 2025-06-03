@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   expand_var.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: gansari <gansari@student.42berlin.de>      +#+  +:+       +#+        */
+/*   By: mukibrok <mukibrok@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/24 15:11:20 by gansari           #+#    #+#             */
-/*   Updated: 2025/05/29 16:37:25 by gansari          ###   ########.fr       */
+/*   Updated: 2025/06/03 19:45:15 by mukibrok         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,7 +30,7 @@ char	*process_arguments(char *arg, t_shell *shell)
 	int		j;
 	char	*expanded;
 
-	expanded = ft_strdup("");
+	expanded = NULL;
 	j = 0;
 	while (arg[j])
 	{
