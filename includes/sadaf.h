@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   sadaf.h                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: gansari <gansari@student.42berlin.de>      +#+  +:+       +#+        */
+/*   By: mukibrok <mukibrok@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/15 19:48:31 by muxammad          #+#    #+#             */
-/*   Updated: 2025/06/02 15:34:09 by gansari          ###   ########.fr       */
+/*   Updated: 2025/06/03 18:20:56 by mukibrok         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -307,6 +307,7 @@ char	*handle_dollar_expansion(char *tilde_expanded, t_shell *shell);
 int		process_expanded_arg(t_execcmd *ecmd, char *expanded, int i);
 int		process_single_arg(t_execcmd *ecmd, t_shell *shell, int i);
 int		is_empty_after_expansion(char *expanded);
+int		if_contains_doubleAndorPipe(const char *str);
 void	handle_empty_argv(t_execcmd *ecmd, int i);
 char	*process_arguments(char *arg, t_shell *shell);
 void	cleanup_tokens(char **tokens);
