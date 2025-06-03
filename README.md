@@ -51,7 +51,7 @@ make
 
 ## 👥 Authors
 
-- **Your Name Here**  
+- **Repo Owner**  
   [Mukhammad Ibrokhimov](https://github.com/mukhammadibrokhimov)
 
 - **Teammate Name**  

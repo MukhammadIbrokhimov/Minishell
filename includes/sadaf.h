@@ -6,7 +6,7 @@
 /*   By: mukibrok <mukibrok@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/15 19:48:31 by muxammad          #+#    #+#             */
-/*   Updated: 2025/06/03 18:20:56 by mukibrok         ###   ########.fr       */
+/*   Updated: 2025/06/03 19:05:39 by mukibrok         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -232,6 +232,7 @@ void	handle_signal_interrupt(char *result);
 void	handle_eof_input(char *result);
 char	*append_line_to_result(char *result, char *line);
 void	process_input_line(char *result, char *line);
+void	cleanup_before_exit(t_shell *shell);
 
 /* Heredoc handling */
 int		handle_heredoc(char *delimiter, t_shell *shell);
@@ -307,7 +308,7 @@ char	*handle_dollar_expansion(char *tilde_expanded, t_shell *shell);
 int		process_expanded_arg(t_execcmd *ecmd, char *expanded, int i);
 int		process_single_arg(t_execcmd *ecmd, t_shell *shell, int i);
 int		is_empty_after_expansion(char *expanded);
-int		if_contains_doubleAndorPipe(const char *str);
+int		if_contains_doubleandorpipe(const char *str);
 void	handle_empty_argv(t_execcmd *ecmd, int i);
 char	*process_arguments(char *arg, t_shell *shell);
 void	cleanup_tokens(char **tokens);
@@ -334,5 +335,6 @@ char	*expand_var(char *expanded, char *arg, int *j, t_shell *shell);
 char	*handle_invalid_var(char *expanded);
 int		handle_exit_command(t_execcmd *ecmd, t_shell *shell, t_cmd *cmd);
 void	try_execute_as_shell_script(char *path, char **argv, t_shell *shell);
+int		validate_numeric_argument(char *clean_arg);
 
 #endif
