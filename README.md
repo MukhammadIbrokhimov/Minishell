@@ -55,4 +55,4 @@ make
   [Mukhammad Ibrokhimov](https://github.com/mukhammadibrokhimov)
 
 - **Teammate Name**  
-  [Ghazaleh Ansari](https://github.com/ghazalehans))
+  [Ghazaleh Ansari](https://github.com/ghazalehans)
