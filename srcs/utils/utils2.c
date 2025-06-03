@@ -64,3 +64,4 @@ int	if_contains_doubleandorpipe(const char *str)
 		str++;
 	}
 	return (0);
+}
