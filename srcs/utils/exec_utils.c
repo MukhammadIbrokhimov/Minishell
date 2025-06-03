@@ -6,7 +6,7 @@
 /*   By: mukibrok <mukibrok@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/12 15:35:27 by gansari           #+#    #+#             */
-/*   Updated: 2025/06/03 14:18:52 by mukibrok         ###   ########.fr       */
+/*   Updated: 2025/06/03 19:03:12 by mukibrok         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,7 +43,7 @@ static void	execute_builtin(t_cmd *cmd, t_shell *shell)
 	{
 		free(clean_cmd);
 		handle_exit_command(ecmd, shell, cmd);
-		return;
+		return ;
 	}
 	free(clean_cmd);
 	status = exec_builtin(ecmd, shell);

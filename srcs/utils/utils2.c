@@ -6,7 +6,7 @@
 /*   By: mukibrok <mukibrok@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/20 16:29:28 by mukibrok          #+#    #+#             */
-/*   Updated: 2025/06/03 18:28:27 by mukibrok         ###   ########.fr       */
+/*   Updated: 2025/06/03 19:02:49 by mukibrok         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,7 +39,7 @@ int	if_contains_lparen(const char *str)
 	return (0);
 }
 
-int	if_contains_doubleAndorPipe(const char *str)
+int	if_contains_doubleandorpipe(const char *str)
 {
 	if (!str)
 		return (1);
@@ -47,6 +47,8 @@ int	if_contains_doubleAndorPipe(const char *str)
 		str++;
 	while (*str)
 	{
+		if (*str == 34 || *str == 39)
+			return (0);
 		if (*str == '&' && *(str + 1) == '&')
 		{
 			ft_fprintf(2,
