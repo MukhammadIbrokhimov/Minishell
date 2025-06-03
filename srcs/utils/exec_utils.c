@@ -6,7 +6,7 @@
 /*   By: gansari <gansari@student.42berlin.de>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/12 15:35:27 by gansari           #+#    #+#             */
-/*   Updated: 2025/06/03 20:29:47 by gansari          ###   ########.fr       */
+/*   Updated: 2025/06/03 21:24:36 by gansari          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,66 +28,6 @@ static int	should_fork(t_cmd *cmd)
 		return (1);
 	ecmd = (t_execcmd *)cmd;
 	return (!is_builtin_no_fork(ecmd->argv[0]));
-}
-
-static void execute_builtin(t_cmd *cmd, t_shell *shell)
-{
-    t_execcmd *ecmd;
-    int status;
-    char *clean_cmd;
-    char **original_argv;  // Add this
-    int i;
-
-    ecmd = (t_execcmd *)cmd;
-    
-    // Save original argv pointers before expansion
-    original_argv = malloc(sizeof(char*) * MAXARGS);
-    if (!original_argv)
-        return;
-    i = 0;
-    while (i < MAXARGS && ecmd->argv[i])
-    {
-        original_argv[i] = ecmd->argv[i];
-        i++;
-    }
-    while (i < MAXARGS)
-    {
-        original_argv[i] = NULL;
-        i++;
-    }
-    
-    expand_variables(ecmd, shell);
-    
-    clean_cmd = remove_quotes(ecmd->argv[0]);
-    if (clean_cmd && ft_strcmp(clean_cmd, "exit") == 0)
-    {
-        free(clean_cmd);
-        // Free expanded argv before exit
-        i = 0;
-        while (i < MAXARGS && ecmd->argv[i])
-        {
-            if (ecmd->argv[i] != original_argv[i])
-                free(ecmd->argv[i]);
-            i++;
-        }
-        free(original_argv);
-        handle_exit_command(ecmd, shell, cmd);
-        return;
-    }
-    free(clean_cmd);
-    
-    status = exec_builtin(ecmd, shell);
-    shell->exit_status = status;
-    
-    // Free expanded argv after builtin execution
-    i = 0;
-    while (i < MAXARGS && ecmd->argv[i])
-    {
-        if (ecmd->argv[i] != original_argv[i])
-            free(ecmd->argv[i]);
-        i++;
-    }
-    free(original_argv);
 }
 
 static void	execute_forked(t_cmd *cmd, t_shell *shell)
