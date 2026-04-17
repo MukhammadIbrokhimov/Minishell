@@ -6,6 +6,12 @@ A UNIX shell reimplementation in C. Parses and executes commands with pipes, red
 
 Built with [Ghazaleh Ansari](https://github.com/ghazalehans) as part of the 42 Berlin Common Core.
 
+## About this project
+
+What makes Minishell harder than the sum of its parts is the interplay between subsystems — a pipe setup interacts with signal handling, quote tokenisation interacts with environment-variable expansion, heredoc collection interacts with `SIGINT` during read. Getting each subsystem right in isolation takes a few days; making them all compose without leaks, hangs, or zombie processes is where most of the commits go.
+
+This repo is what we arrived at after that compose-them-all phase: a shell that behaves close to bash for the handled feature set, passes valgrind clean on the paths the 42 subject requires, and whose parser, executor, and signal handlers can be read independently rather than as one tangled file.
+
 ## Features
 
 - Interactive prompt powered by GNU Readline, with history
