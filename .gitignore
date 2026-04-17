@@ -52,3 +52,18 @@ Mkfile.old
 dkms.conf
 # minishell_tester
 ./minishell_tester
+# covers build artefacts but NOT macOS metadata or editor configs).
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Editor / IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Minishell binary (project-specific)
+minishell
