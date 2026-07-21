@@ -65,4 +65,4 @@ From the 42 subject:
 ## Authors
 
 - [Mukhammad Ibrokhimov](https://github.com/MukhammadIbrokhimov)
-- [Ghazaleh Ansari](https://github.com/ghazalehans)
+- [Ghazaleh Ansari](https://github.com/Ghazaleh-ans)
